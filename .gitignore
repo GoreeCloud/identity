@@ -1,0 +1,14 @@
+/bin/
+/dist/
+/data/
+/tmp/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+secrets/
+*.key
+*.pem
