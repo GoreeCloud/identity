@@ -8,8 +8,9 @@ The repository currently implements:
 - explicit loopback-only operational listener validation;
 - health and readiness endpoints;
 - bounded HTTP server limits and graceful shutdown;
-- unit tests and exact-source formatting, test, vet, and build CI.
+- unit tests and exact-source formatting, test, vet, and build CI;
+- a fail-closed registration-policy primitive covering administrator-authorized, invitation-authorized, and explicitly enabled public registration decisions.
 
 ## Product boundary
 
-No authentication product capability is verified as implemented yet. The current foundation does not authenticate users, persist identities, issue or validate security-bearing tokens, create sessions, enroll authenticators, authorize applications, or establish production identity authority.
+No authentication product capability is verified as implemented yet. The registration-policy primitive is not connected to a registration endpoint and does not create accounts. The current foundation does not authenticate users, persist identities, issue or validate security-bearing tokens, create sessions, enroll authenticators, authorize applications, or establish production identity authority.
