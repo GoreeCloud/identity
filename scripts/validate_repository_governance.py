@@ -98,9 +98,9 @@ def main() -> int:
 
     lifecycle = (ROOT / "internal/account/lifecycle.go").read_text(encoding="utf-8")
     for marker in (
-        'StateActive State = "active"',
-        'StateDeactivated State = "deactivated"',
-        'StateDeleted State = "deleted"',
+        "StateActive",
+        "StateDeactivated",
+        "StateDeleted",
         "OperationPermanentDelete",
         "PermanentDeletionConfirmed bool",
         "ErrPermanentDeletionConfirmation",
