@@ -2,7 +2,7 @@
 
 GoreeCloud Identity is the planned privacy-first, self-hosted identity and authentication authority for GoreeCloud applications and services.
 
-> **Current status:** Active Development. The repository contains a bounded Go service foundation with loopback-only operational health/readiness endpoints, configuration validation, tests, and CI. It does not yet authenticate users, issue sessions or tokens, store credentials, or provide production identity authority.
+> **Current status:** Active Development. The repository contains a bounded Go service foundation plus a tested fail-closed registration-policy primitive. Public registration is disabled by default; explicit administrator or valid-invitation paths can be represented. The service does not yet authenticate users, issue sessions or tokens, store credentials, create accounts, or provide production identity authority.
 
 ## Authority boundary
 
@@ -10,7 +10,7 @@ Identity owns identity and authentication decisions. GoreeCloud Vault remains au
 
 ## Development foundation
 
-The current service listens only on explicit loopback addresses through `GOREECLOUD_IDENTITY_ADMIN_LISTEN`, defaulting to `127.0.0.1:8860`. It exposes only `/healthz` and `/readyz`.
+The current service listens only on explicit loopback addresses through `GOREECLOUD_IDENTITY_ADMIN_LISTEN`, defaulting to `127.0.0.1:8860`. It exposes only `/healthz` and `/readyz`. The registration-policy code is a domain primitive and is not connected to an HTTP account-creation endpoint.
 
 ## Documentation
 
