@@ -43,3 +43,10 @@ Source presence, passing CI, or a running process does not establish production 
 ## Account creation baseline
 
 Hosted GoreeCloud account creation must be administrator-controlled or invitation-based by default. Public registration is an explicit administrative option, never an implication of public reachability. If registration-policy state is missing, malformed, stale, or unknown, account creation must fail closed to the invite-only/administrator-controlled posture. UI state must not be the enforcement boundary; service APIs must enforce the authoritative policy.
+
+
+## Account lifecycle baseline
+
+Account lifecycle must remain distinct from session and device controls. Deactivation is reversible and does not equal permanent deletion. Reactivation restores the active account lifecycle state. Permanent deletion is an explicit, confirmation-gated terminal transition and must not be inferred from logout, session revocation, device removal, ordinary deactivation, inactivity, or UI state.
+
+The current Development implementation models only these lifecycle transitions in memory. It does not persist account state or execute deletion of credentials, files, backups, audit records, or other data. Future persistence and deletion execution must define retention, legal/operational exceptions where applicable, Everkeep recovery boundaries, privacy evidence, and irreversible deletion semantics before production acceptance.

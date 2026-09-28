@@ -31,8 +31,12 @@ REQUIRED = (
     "internal/config/config_test.go",
     "internal/registration/policy.go",
     "internal/registration/policy_test.go",
+    "internal/account/lifecycle.go",
+    "internal/account/lifecycle_test.go",
     ".github/workflows/ci.yml",
     ".github/workflows/vulnerability.yml",
+    ".github/workflows/repository-governance.yml",
+    "scripts/validate_repository_governance.py",
 )
 
 SYSTEMS = (
@@ -89,6 +93,32 @@ def main() -> int:
     ):
         if marker not in tests:
             fail(f"registration policy tests are missing: {marker}")
+            errors += 1
+
+
+    lifecycle = (ROOT / "internal/account/lifecycle.go").read_text(encoding="utf-8")
+    for marker in (
+        "StateActive",
+        "StateDeactivated",
+        "StateDeleted",
+        "OperationPermanentDelete",
+        "PermanentDeletionConfirmed bool",
+        "ErrPermanentDeletionConfirmation",
+        "ErrDeletedAccountTerminal",
+    ):
+        if marker not in lifecycle:
+            fail(f"account lifecycle is missing required marker: {marker!r}")
+            errors += 1
+
+    lifecycle_tests = (ROOT / "internal/account/lifecycle_test.go").read_text(encoding="utf-8")
+    for marker in (
+        "TestDeactivateAndReactivateAreReversible",
+        "TestPermanentDeleteRequiresExplicitConfirmation",
+        "TestDeletedAccountIsTerminal",
+        "TestUnknownStateAndOperationFailClosed",
+    ):
+        if marker not in lifecycle_tests:
+            fail(f"account lifecycle tests are missing: {marker}")
             errors += 1
 
     ignored = {

@@ -1,5 +1,19 @@
 # GoreeCloud Identity — Project Record
 
+## September 27, 2026 — Account lifecycle 0.2 candidate
+
+- Added `internal/account` with explicit active, deactivated, and deleted lifecycle states.
+- Deactivation and reactivation are reversible/idempotent domain transitions.
+- Permanent deletion requires an explicit confirmation flag and moves to a terminal deleted state.
+- Deleted accounts reject later lifecycle transitions.
+- Unknown operations fail closed; logout-like operations are deliberately not account lifecycle transitions.
+- Extended repository governance to require the lifecycle source and negative-path tests.
+
+### Verification boundary
+
+This is a non-persistent Development domain model. It does not create, store, deactivate, reactivate, or delete real accounts or user data; does not revoke sessions/devices; and does not establish authentication, production identity authority, or Stable status.
+
+
 ## Current verified state
 
 - **Repository:** `GoreeCloud/identity`
