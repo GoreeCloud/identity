@@ -9,3 +9,6 @@
 .DS_Store
 .idea/
 .vscode/
+secrets/
+*.key
+*.pem
