@@ -18,4 +18,10 @@ Running `go run ./cmd/goreecloud-identity` starts the operational service on `12
 
 The current source includes a domain-level registration policy primitive. Its default is fail-closed for public registration. It does not create accounts, issue invitations, or expose registration endpoints.
 
-No production authentication, account administration, token issuance, or Stable operation is available yet.
+## Account lifecycle
+
+The Development source contains an in-memory lifecycle model for active, deactivated, and deleted account states. It demonstrates that deactivation is reversible and that permanent deletion requires explicit confirmation and is terminal.
+
+It does not persist or delete real accounts or user data. Logout, session revocation, and device removal are intentionally separate concerns.
+
+No production authentication, account administration, token issuance, deletion execution, or Stable operation is available yet.
