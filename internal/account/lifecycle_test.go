@@ -83,8 +83,8 @@ func TestPermanentDeleteAcceptsActiveOrDeactivatedAccount(t *testing.T) {
 	for _, state := range []State{StateActive, StateDeactivated} {
 		t.Run(string(state), func(t *testing.T) {
 			next, err := Transition(TransitionRequest{
-				Current:                     state,
-				Operation:                   OperationPermanentDelete,
+				Current:                    state,
+				Operation:                  OperationPermanentDelete,
 				PermanentDeletionConfirmed: true,
 			})
 			if err != nil {
@@ -105,8 +105,8 @@ func TestDeletedAccountIsTerminal(t *testing.T) {
 	} {
 		t.Run(string(operation), func(t *testing.T) {
 			state, err := Transition(TransitionRequest{
-				Current:                     StateDeleted,
-				Operation:                   operation,
+				Current:                    StateDeleted,
+				Operation:                  operation,
 				PermanentDeletionConfirmed: true,
 			})
 			if !errors.Is(err, ErrDeletedAccountTerminal) {
