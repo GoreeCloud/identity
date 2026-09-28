@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	ErrUnknownState                 = errors.New("unknown account lifecycle state")
-	ErrUnknownOperation             = errors.New("unknown account lifecycle operation")
+	ErrUnknownState                  = errors.New("unknown account lifecycle state")
+	ErrUnknownOperation              = errors.New("unknown account lifecycle operation")
 	ErrPermanentDeletionConfirmation = errors.New("permanent account deletion requires explicit confirmation")
-	ErrDeletedAccountTerminal       = errors.New("deleted account state is terminal")
+	ErrDeletedAccountTerminal        = errors.New("deleted account state is terminal")
 )
 
 type State string
@@ -29,8 +29,8 @@ const (
 )
 
 type TransitionRequest struct {
-	Current                     State
-	Operation                   Operation
+	Current                    State
+	Operation                  Operation
 	PermanentDeletionConfirmed bool
 }
 
@@ -44,14 +44,8 @@ func Transition(request TransitionRequest) (State, error) {
 
 	switch request.Operation {
 	case OperationDeactivate:
-		if request.Current == StateDeactivated {
-			return StateDeactivated, nil
-		}
 		return StateDeactivated, nil
 	case OperationReactivate:
-		if request.Current == StateActive {
-			return StateActive, nil
-		}
 		return StateActive, nil
 	case OperationPermanentDelete:
 		if !request.PermanentDeletionConfirmed {
