@@ -6,4 +6,5 @@
 - Added loopback-only operational configuration, health/readiness endpoints, bounded HTTP server limits, graceful shutdown, unit tests, and exact-source CI.
 - Established the repository-local project specification and identity/Vault authority boundary.
 - Added architecture, security, privacy, feature-lifecycle, and platform-integration records.
+- Added a fail-closed registration-policy primitive with tests; it is not connected to an account-creation endpoint.
 - No authentication, token, session, credential, production, or Stable capability is established by this milestone.
