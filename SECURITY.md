@@ -18,3 +18,10 @@ Identity must fail closed on invalid security-sensitive configuration, use least
 ## Registration security baseline
 
 The current registration-policy primitive fails closed. Public registration is disabled by default, administrator provisioning requires an explicit grant, invitation provisioning requires a valid invitation, and unknown registration methods are denied. This domain rule must remain enforced at the service/API boundary when account-creation endpoints are later introduced; hiding a UI control is not sufficient enforcement.
+
+
+## Account lifecycle security baseline
+
+Deactivation, reactivation, permanent deletion, logout, session revocation, and device revocation are separate security operations. The current lifecycle domain permits reversible deactivation/reactivation and requires explicit confirmation before entering the terminal deleted state. Unknown operations fail closed, and a deleted account cannot be reactivated through the lifecycle primitive.
+
+This source does not execute persistent deletion. Future deletion workflows must bind authorization, recent reauthentication where required, confirmation, audit evidence, protected-data cleanup, session/device revocation, recovery boundaries, and safe failure behavior to the trusted service layer.
