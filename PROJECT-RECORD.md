@@ -17,7 +17,8 @@ The repository gained its first executable Development source:
 - explicit loopback-only operational listener configuration;
 - health and readiness endpoints;
 - bounded HTTP server resources and graceful shutdown;
-- deterministic unit tests and exact-source CI.
+- deterministic unit tests and exact-source CI;
+- a fail-closed registration-policy primitive with tests. It is not connected to an account-creation endpoint and creates no identities by itself.
 
 The repository also gained an initial project specification based on the verified Identity product role and current GoreeCloud governance. No prior authoritative Identity project-specification file was located in the connected migration-source records during this baseline.
 
