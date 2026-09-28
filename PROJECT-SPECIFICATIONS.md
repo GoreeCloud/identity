@@ -18,7 +18,7 @@ GoreeCloud Vault remains authoritative for protected credentials, passkeys, auth
 
 ## Current Development boundary
 
-The current repository implements only a loopback-only operational service foundation with health/readiness endpoints, configuration validation, tests, and CI. It does not authenticate users, store credentials, issue tokens, create sessions, expose federation endpoints, enroll passkeys, process multi-factor authentication, or authorize application actions.
+The current repository implements a loopback-only operational service foundation with health/readiness endpoints, configuration validation, tests, CI, and a bounded registration-policy primitive. The policy defaults public registration to disabled, permits administrator-authorized or valid-invitation provisioning inputs, and fails closed for unknown methods. It is not connected to an account-creation endpoint and creates no identities. The repository does not authenticate users, store credentials, issue tokens, create sessions, expose federation endpoints, enroll passkeys, process multi-factor authentication, or authorize application actions.
 
 ## Target capability areas
 
@@ -39,3 +39,7 @@ GoreeCloud Sync remains separately governed and is not a tenth Integral Platform
 ## Release boundary
 
 Source presence, passing CI, or a running process does not establish production authentication authority. Production approval requires exact-revision evidence, security/privacy review, recovery and rollback evidence, platform integration acceptance, target-environment validation, and an explicit release lifecycle decision.
+
+## Account creation baseline
+
+Hosted GoreeCloud account creation must be administrator-controlled or invitation-based by default. Public registration is an explicit administrative option, never an implication of public reachability. If registration-policy state is missing, malformed, stale, or unknown, account creation must fail closed to the invite-only/administrator-controlled posture. UI state must not be the enforcement boundary; service APIs must enforce the authoritative policy.
