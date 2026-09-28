@@ -13,4 +13,4 @@ The repository currently implements:
 
 ## Product boundary
 
-No authentication product capability is verified as implemented yet. The registration-policy primitive is not connected to a registration endpoint and does not create accounts. The current foundation does not authenticate users, persist identities, issue or validate security-bearing tokens, create sessions, enroll authenticators, authorize applications, or establish production identity authority.
+No authentication product capability is verified as implemented yet. The registration policy is a bounded Development domain rule, not an account-creation service. The registration-policy primitive is not connected to a registration endpoint and does not create accounts. The current foundation does not authenticate users, persist identities, issue or validate security-bearing tokens, create sessions, enroll authenticators, authorize applications, or establish production identity authority.
