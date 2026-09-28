@@ -1,0 +1,91 @@
+schema_version: "0.4"
+
+component:
+  type: service
+  id: goreecloud-identity
+  product_name: GoreeCloud Identity
+  repository: GoreeCloud/identity
+
+lifecycle: development
+version: unreleased-development
+
+supported_platforms:
+  - linux
+
+api:
+  versions: []
+  endpoints: []
+
+platform_systems:
+  manager:
+    result: applicable-blocked
+    version: null
+    evidence: [README.md, PLATFORM-INTEGRATIONS.md]
+  privacy_shield:
+    result: applicable-blocked
+    version: null
+    evidence: [PRIVACY.md, PLATFORM-INTEGRATIONS.md]
+  wardveil_security:
+    result: applicable-blocked
+    version: null
+    evidence: [SECURITY.md, PLATFORM-INTEGRATIONS.md]
+  everkeep:
+    result: applicable-blocked
+    version: null
+    evidence: [ARCHITECTURE.md, PLATFORM-INTEGRATIONS.md]
+  glaze_ui:
+    result: applicable-blocked
+    version: null
+    evidence: [PROJECT-SPECIFICATIONS.md, PLATFORM-INTEGRATIONS.md]
+  mesh:
+    result: applicable-blocked
+    version: null
+    evidence: [PLATFORM-INTEGRATIONS.md]
+    capabilities: []
+    dependencies: []
+    published_events: []
+    consumed_events: []
+  identity:
+    result: applicable-blocked
+    version: null
+    evidence: [PROJECT-SPECIFICATIONS.md, PLATFORM-INTEGRATIONS.md]
+  policy:
+    result: applicable-blocked
+    version: null
+    evidence: [PLATFORM-INTEGRATIONS.md]
+  observability:
+    result: applicable-blocked
+    version: null
+    evidence: [PLATFORM-INTEGRATIONS.md]
+
+health:
+  health_endpoint: "http://127.0.0.1:8860/healthz"
+  readiness_endpoint: "http://127.0.0.1:8860/readyz"
+
+external_dependencies: []
+
+compatibility:
+  platform_contract: "0.4"
+  requires:
+    - goreecloud-platform-contract==0.4
+  provides: []
+
+evidence:
+  acceptance_tests: []
+  release: []
+
+conformance:
+  status: nonconformant
+  validated_at: null
+  evidence:
+    - README.md
+    - PROJECT-SPECIFICATIONS.md
+    - ARCHITECTURE.md
+    - SECURITY.md
+    - PRIVACY.md
+    - PLATFORM-INTEGRATIONS.md
+  blockers:
+    - No authentication product capability is implemented.
+    - All applicable Integral Platform System integrations remain unaccepted.
+    - Security, privacy, recovery, and target-environment acceptance are incomplete.
+    - No Stable or production-approved release evidence exists.
