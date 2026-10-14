@@ -7,8 +7,10 @@ import (
 )
 
 type statusResponse struct {
-	Service string `json:"service"`
-	Status  string `json:"status"`
+	Service            string `json:"service"`
+	Status             string `json:"status"`
+	Scope              string `json:"scope"`
+	ProductionAccepted bool   `json:"production_accepted"`
 }
 
 func Handler() http.Handler {
@@ -42,7 +44,10 @@ func statusHandler(status string) http.HandlerFunc {
 		if r.Method == http.MethodHead {
 			return
 		}
-		_ = json.NewEncoder(w).Encode(statusResponse{Service: "goreecloud-identity", Status: status})
+		_ = json.NewEncoder(w).Encode(statusResponse{
+			Service: "goreecloud-identity", Status: status,
+			Scope: "development-foundation", ProductionAccepted: false,
+		})
 	}
 }
 
