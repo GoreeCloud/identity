@@ -23,6 +23,12 @@ func TestStatusEndpoints(t *testing.T) {
 			if !strings.Contains(body, `"service":"goreecloud-identity"`) || !strings.Contains(body, `"status":"`+tc.status+`"`) {
 				t.Fatalf("unexpected body %q", body)
 			}
+			if !strings.Contains(body, `"production_accepted":false`) {
+				t.Fatalf("health/readiness must not imply Identity production acceptance: %q", body)
+			}
+			if !strings.Contains(body, `"scope":"development-foundation"`) {
+				t.Fatalf("development scope missing from status response: %q", body)
+			}
 			if rec.Header().Get("Cache-Control") != "no-store" {
 				t.Fatal("missing no-store")
 			}
