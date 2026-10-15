@@ -15,3 +15,17 @@ The repository currently implements:
 ## Product boundary
 
 No authentication product capability is verified as implemented yet. The registration policy is a bounded Development domain rule, not an account-creation service. The registration-policy primitive is not connected to a registration endpoint and does not create accounts. The current foundation does not authenticate users, persist identities, execute account/data deletion, issue or validate security-bearing tokens, create sessions, enroll authenticators, authorize applications, or establish production identity authority.
+
+Development health/readiness JSON includes `scope: development-foundation` and `production_accepted: false`. An HTTP-ready process is not evidence that Identity can authenticate a user, supply trusted tokens, or serve production traffic; no such authority is claimed by these endpoints.
+
+### Concurrent stabilization audit — 2026-10-15
+
+Development readiness audit: HEAD health/readiness responses remain bodyless and carry noncacheable, nosniff JSON headers. Synthetic tests validate HEAD semantics; neither endpoint asserts production authentication readiness.
+
+### Source-stabilization checkpoint — 2026-10-15
+
+Development bind validation tests reject spoofed loopback hostnames and malformed listener ports, while permitting documented loopback addresses. All three exact-source CI/governance/vulnerability workflows passed. No production Identity issuer is asserted.
+
+### Development-to-production status boundary — 2026-10-15
+
+Development Identity listener configuration accepts decimal-only port strings; signed prefixes or embedded spaces cannot slip past numeric parsing and fail later at bind time. Negative regression cases verify malformed port and spoofed loopback inputs.

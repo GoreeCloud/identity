@@ -50,6 +50,33 @@ func TestLoadFromRejectsNonLoopback(t *testing.T) {
 	}
 }
 
+func TestAdminListenRejectsSpoofedLoopbackAndMalformedPorts(t *testing.T) {
+	for _, address := range []string{
+		"localhost.evil.invalid:8860",
+		"127.0.0.1.evil.invalid:8860",
+		"0.0.0.0:8860",
+		"127.0.0.1:0",
+		"127.0.0.1:-1",
+		"127.0.0.1:invalid",
+		"127.0.0.1:65536",
+		"127.0.0.1:+8860",
+		"127.0.0.1: 8860",
+		"127.0.0.1:88x60",
+	} {
+		t.Run(address, func(t *testing.T) {
+			_, err := LoadFrom(func(key string) string {
+				if key == "GOREECLOUD_IDENTITY_ADMIN_LISTEN" {
+					return address
+				}
+				return ""
+			})
+			if err == nil {
+				t.Fatalf("unsafe Identity Development bind %q accepted", address)
+			}
+		})
+	}
+}
+
 func TestLoadFromRejectsInvalidPort(t *testing.T) {
 	_, err := LoadFrom(func(key string) string {
 		if key == "GOREECLOUD_IDENTITY_ADMIN_LISTEN" {
