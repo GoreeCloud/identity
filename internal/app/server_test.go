@@ -36,6 +36,31 @@ func TestStatusEndpoints(t *testing.T) {
 	}
 }
 
+func TestHeadStatusIsBodylessAndNonCacheable(t *testing.T) {
+	for _, path := range []string{"/healthz", "/readyz"} {
+		t.Run(path, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodHead, path, nil)
+			rec := httptest.NewRecorder()
+			Handler().ServeHTTP(rec, req)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("HEAD status = %d", rec.Code)
+			}
+			if rec.Body.Len() != 0 {
+				t.Fatalf("HEAD unexpectedly returned a response body")
+			}
+			if rec.Header().Get("Cache-Control") != "no-store" {
+				t.Fatal("HEAD status must not be cached")
+			}
+			if rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+				t.Fatal("missing nosniff protection")
+			}
+			if rec.Header().Get("Content-Type") != "application/json" {
+				t.Fatal("missing JSON response content type")
+			}
+		})
+	}
+}
+
 func TestStatusEndpointsRejectMutationMethods(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/healthz", strings.NewReader("ignored"))
 	rec := httptest.NewRecorder()
