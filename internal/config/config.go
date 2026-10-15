@@ -33,6 +33,9 @@ func LoadFrom(getenv func(string) string) (Config, error) {
 	if host == "" || !isExplicitLoopback(host) {
 		return Config{}, fmt.Errorf("%w: %q", ErrNonLoopbackAdminListen, addr)
 	}
+	if port == "" || strings.Trim(port, "0123456789") != "" {
+		return Config{}, fmt.Errorf("invalid admin listen port %q", port)
+	}
 	portNumber, err := strconv.Atoi(port)
 	if err != nil || portNumber < 1 || portNumber > 65535 {
 		return Config{}, fmt.Errorf("invalid admin listen port %q", port)
