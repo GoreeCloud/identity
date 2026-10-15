@@ -59,6 +59,9 @@ func TestAdminListenRejectsSpoofedLoopbackAndMalformedPorts(t *testing.T) {
 		"127.0.0.1:-1",
 		"127.0.0.1:invalid",
 		"127.0.0.1:65536",
+		"127.0.0.1:+8860",
+		"127.0.0.1: 8860",
+		"127.0.0.1:88x60",
 	} {
 		t.Run(address, func(t *testing.T) {
 			_, err := LoadFrom(func(key string) string {
