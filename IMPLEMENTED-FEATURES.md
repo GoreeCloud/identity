@@ -25,3 +25,7 @@ Development readiness audit: HEAD health/readiness responses remain bodyless and
 ### Source-stabilization checkpoint — 2026-10-15
 
 Development bind validation tests reject spoofed loopback hostnames and malformed listener ports, while permitting documented loopback addresses. All three exact-source CI/governance/vulnerability workflows passed. No production Identity issuer is asserted.
+
+### Development-to-production status boundary — 2026-10-15
+
+Development Identity listener configuration accepts decimal-only port strings; signed prefixes or embedded spaces cannot slip past numeric parsing and fail later at bind time. Negative regression cases verify malformed port and spoofed loopback inputs.
