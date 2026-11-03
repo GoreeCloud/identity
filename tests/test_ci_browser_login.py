@@ -104,10 +104,18 @@ class BrowserNavigationTests(unittest.TestCase):
         auth = "http://localhost:8080/realms/goreecloud/protocol/openid-connect/auth?client_id=synthetic"
         callback = CALLBACK_URI + "?error=invalid_scope&error_description=secret-diagnostic&state=secret-state"
         with patch("smoke_login.read_response", return_value=(302, callback, "")):
-            with self.assertRaisesRegex(OIDCError, "pre-login callback before synthetic sign-in \\(invalid_scope\\)") as raised:
+            with self.assertRaisesRegex(OIDCError, "pre-login callback before synthetic sign-in \\(invalid_scope:unspecified\\)") as raised:
                 authorize_browser(auth, "gc-ci-user", "fake-credential")
         self.assertNotIn("secret-diagnostic", str(raised.exception))
         self.assertNotIn("secret-state", str(raised.exception))
+
+    def test_provider_invalid_scope_description_is_allowlisted(self):
+        auth = "http://localhost:8080/realms/goreecloud/protocol/openid-connect/auth?client_id=synthetic"
+        callback = CALLBACK_URI + "?error=invalid_scope&error_description=The+profile+scope+was+not+registered+secret-marker"
+        with patch("smoke_login.read_response", return_value=(302, callback, "")):
+            with self.assertRaisesRegex(OIDCError, "invalid_scope:profile") as raised:
+                authorize_browser(auth, "gc-ci-user", "fake-credential")
+        self.assertNotIn("secret-marker", str(raised.exception))
 
     def test_unknown_prelogin_oauth_errors_are_redacted(self):
         auth = "http://localhost:8080/realms/goreecloud/protocol/openid-connect/auth?client_id=synthetic"
