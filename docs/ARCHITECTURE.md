@@ -8,6 +8,12 @@ The Keycloak realm named `goreecloud` is the authoritative issuer for its tenant
 
 Keycloak supplies upstream identity protocols and account consoles. GoreeCloud authors compose configuration, a theme, setup checks and a separate policy-example library. Do not confuse the latter with a security enforcement point: `evaluate()` requires authenticated subject metadata obtained after full token verification by a reputable OIDC library.
 
+## Offline and isolated CI validation
+
+`python3 -m unittest discover -s tests -v` validates deny-by-default authorization policy and strict discovery metadata/JWKS parsing without opening a socket. The CI `isolated-runtime-smoke` job runs disposable Keycloak and PostgreSQL containers **only on GitHub-hosted ephemeral runners**: it tests the Keycloak OIDC discovery document and public signing keys, then restarts the identity service and repeats discovery. It binds the host port to loopback.
+
+This is not a functional user login test, an independent token signature validation implementation, a persistence backup test, or a production load test. The workflow exists independently of its passing status; runtime acceptance must be verified from actual CI logs.
+
 ## Production target (not implemented)
 
 - Dedicated hardened Keycloak runtime behind approved HTTPS termination; strict hostname, reverse-proxy and forwarding-header verification.

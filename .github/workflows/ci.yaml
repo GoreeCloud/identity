@@ -4,6 +4,7 @@ on:
   pull_request:
 permissions:
   contents: read
+
 jobs:
   offline-checks:
     runs-on: ubuntu-latest
@@ -13,7 +14,45 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Check policy engine and secret bootstrap
+      - name: Check authorization, configuration and OIDC validation
         run: python3 -m unittest discover -s tests -v
       - name: Validate development configuration
         run: python3 scripts/check_config.py
+
+  isolated-runtime-smoke:
+    needs: offline-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate isolated ephemeral secrets
+        run: python3 scripts/init_env.py
+      - name: Validate private Docker Compose configuration
+        run: |
+          python3 scripts/check_config.py
+          docker compose config --quiet
+          python3 - <<'PY'
+          import json
+          import subprocess
+          data = json.loads(subprocess.check_output(
+              ["docker", "compose", "config", "--format", "json"], text=True))
+          identity = data["services"]["identity"]
+          assert identity["ports"][0]["host_ip"] == "127.0.0.1"
+          assert str(identity["ports"][0]["published"]) == "8080"
+          assert not data["services"]["db"].get("ports")
+          print("PASS: only Keycloak loopback port is published")
+          PY
+      - name: Start disposable local identity engine
+        run: docker compose up -d
+      - name: Verify OIDC metadata and public JWKS
+        run: python3 scripts/smoke_oidc.py
+      - name: Restart identity container and verify realm continuity
+        run: |
+          docker compose restart identity
+          python3 scripts/smoke_oidc.py
+      - name: Stop isolated test services
+        if: always()
+        run: docker compose down --remove-orphans
