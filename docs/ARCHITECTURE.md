@@ -12,7 +12,7 @@ Keycloak supplies upstream identity protocols and account consoles. GoreeCloud a
 
 `python3 -m unittest discover -s tests -v` validates deny-by-default authorization policy and strict discovery metadata/JWKS parsing without opening a socket. The CI `isolated-runtime-smoke` job runs disposable Keycloak and PostgreSQL containers **only on GitHub-hosted ephemeral runners**: it tests the Keycloak OIDC discovery document and public signing keys, then restarts the identity service and repeats discovery. It binds the host port to loopback.
 
-This is not a functional user login test, an independent token signature validation implementation, a persistence backup test, or a production load test. The workflow exists independently of its passing status; runtime acceptance must be verified from actual CI logs.
+The separate CI-only restore smoke tests a custom-format PostgreSQL archive against a newly named temporary database, verifies the GoreeCloud realm row, and then drops only that temporary test database. This is not a real user login test, a production recovery procedure, a production load test, or evidence of encrypted off-host backups. The workflow exists independently of its passing status; runtime acceptance must be verified from actual CI logs.
 
 ## Standalone access-token verifier (not integrated)
 

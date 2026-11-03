@@ -33,7 +33,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 25. GoreeCloud UI | Initial login CSS theme | Visual/a11y acceptance and fuller portal |
 | 26. Digital credentials | Not enabled | Evaluate Keycloak preview features and standards |
 | 27. Infrastructure | Local-only Compose available | Production architecture, HA, secrets |
-| 28. Backups/recovery | Database volume persists; no backup automation | Encrypted backup + restore drills |
+| 28. Backups/recovery | Database volume persists; CI-only disposable PostgreSQL archive/restore test added (results must be verified) | Encrypted off-host backup, production-safe recovery and restore drills |
 | 29. Privacy/compliance | Protective local defaults | Threat model, audits, policy review |
 | 30. GoreeCloud integrations | Not integrated | Gateway, VPN, DNS and app OIDC adapters |
 | 31. Administration | Upstream admin console | GoreeCloud branded admin experience |
