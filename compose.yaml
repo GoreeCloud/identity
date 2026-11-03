@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: goreecloud_identity
       POSTGRES_USER: identity
-      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD:?Run python3 scripts/init_env.py}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run python3 scripts/init_env.py}
     volumes:
       - identity-data:/var/lib/postgresql/data
     networks:
@@ -31,9 +31,9 @@ services:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://db:5432/goreecloud_identity
       KC_DB_USERNAME: identity
-      KC_DB_PASSWORD: \${POSTGRES_PASSWORD:?Run python3 scripts/init_env.py}
-      KC_BOOTSTRAP_ADMIN_USERNAME: \${KC_BOOTSTRAP_ADMIN_USERNAME:?Run python3 scripts/init_env.py}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: \${KC_BOOTSTRAP_ADMIN_PASSWORD:?Run python3 scripts/init_env.py}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:?Run python3 scripts/init_env.py}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:?Run python3 scripts/init_env.py}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Run python3 scripts/init_env.py}
       KC_HOSTNAME: http://localhost:8080
       KC_HTTP_ENABLED: "true"
       KC_HEALTH_ENABLED: "true"
