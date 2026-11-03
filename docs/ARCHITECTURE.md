@@ -18,6 +18,10 @@ The separate CI-only restore smoke tests a custom-format PostgreSQL archive agai
 
 The optional Python helper in `src/goreecloud_identity/tokens.py` uses PyJWT to verify RS256 signatures against a caller-supplied, already-trusted JWKS and enforces exact realm issuer, resource audience, OAuth client (`azp`), bearer token type, timestamps and maximum lifetime. See [the verification contract](TOKEN_VERIFICATION.md). No remote JWKS discovery, browser login, refresh, revocation or gateway integration is implemented by this helper.
 
+## Development OIDC PKCE client core
+
+The [OIDC relying-party module](OIDC_RELYING_PARTY.md) builds authorization-code/S256 PKCE requests, pins Keycloak discovery and signing-key URLs, and verifies synthetic RS256-signed ID tokens. Real browser sessions, registered clients, code exchange against a live Keycloak login, logout, revocation, and Gateway enforcement remain unimplemented.
+
 ## Production target (not implemented)
 
 - Dedicated hardened Keycloak runtime behind approved HTTPS termination; strict hostname, reverse-proxy and forwarding-header verification.
