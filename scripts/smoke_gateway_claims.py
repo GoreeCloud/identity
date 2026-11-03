@@ -60,6 +60,29 @@ def classify_verified_gateway_claims(claims: dict, client_id: str) -> str:
     return ",".join(key for key, passes in checks.items() if not passes) or "none"
 
 
+def require_policy_rejection(token: str, jwks: dict, **changes: object) -> None:
+    """A negative test only passes when the strict verifier rejects it.
+
+    All defaults are trusted test configuration; overrides are hardcoded in
+    the disposable runner. No token material or rejection detail is logged.
+    """
+    expected = {
+        "issuer": ISSUER,
+        "audience": "goreecloud-gateway-console",
+        "authorized_party": CLIENT_ID,
+        "tenant_id": "family",
+        "jwks": jwks,
+        "required_scopes": ["gateway:read"],
+        "max_lifetime_seconds": 3600,
+    }
+    expected.update(changes)
+    try:
+        verify_access_token(token, **expected)
+    except VerificationError:
+        return
+    raise ValueError("real Keycloak token accepted with an invalid trust policy")
+
+
 def main() -> None:
     assert_ci_environment()
     if not SECRET_FILE.is_file():
@@ -141,17 +164,22 @@ def main() -> None:
     verified_claims = jwt.decode(access_token, options={"verify_signature": False})
     check_gateway_claims(verified_claims, CLIENT_ID)
 
-    try:
-        verify_access_token(
-            access_token, issuer=ISSUER, audience="another-service",
-            authorized_party=CLIENT_ID, tenant_id="family", jwks=keys,
-            required_scopes=["gateway:read"],
-        )
-    except VerificationError:
-        pass
-    else:
-        raise ValueError("access token unexpectedly valid for another resource")
+    # Real token, strict negative authorization tests. These calls MUST reject
+    # rather than implicitly infer permissions from an authenticated user.
+    require_policy_rejection(access_token, keys, audience="another-service")
+    require_policy_rejection(access_token, keys, authorized_party="other-client")
+    require_policy_rejection(access_token, keys, tenant_id="business")
+    require_policy_rejection(access_token, keys, required_scopes=["gateway:write"])
+    require_policy_rejection(access_token, {"keys": []})
+    require_policy_rejection(id_token, keys)
 
+    parts = access_token.split(".")
+    if len(parts) != 3 or not parts[2]:
+        raise ValueError("unexpected JWT structure")
+    corrupt = ("A" if parts[2][0] != "A" else "B") + parts[2][1:]
+    require_policy_rejection(".".join([parts[0], parts[1], corrupt]), keys)
+
+    print("PASS: verified real Keycloak token denied for wrong audience/client/tenant/scope, ID-token use, signing key and signature")
     print("PASS: real disposable Keycloak access token contains verified Gateway audience, client, role, tenant and scope")
     print("NOT TESTED: real Go Gateway process, MFA, token introspection, production session revocation or Android")
 
