@@ -90,7 +90,23 @@ def main() -> None:
             authorized_party=CLIENT_ID, tenant_id="family", jwks=keys,
             required_scopes=["gateway:read"], max_lifetime_seconds=3600,
         )
-    except VerificationError:
+    except VerificationError as error:
+        # Only static, audited verification-failure categories are printed.
+        # Never include raw JWTs, claims, URLs or provider exception strings.
+        categories = {
+            "invalid or non-HTTPS issuer": "issuer_configuration",
+            "missing trusted identity configuration": "identity_configuration",
+            "trusted JWKS is unavailable": "key_source",
+            "ambiguous or unknown signing key": "signing_kid",
+            "JWT signature or registered claims invalid": "signature_or_audience",
+            "ID token or unexpected token type rejected": "token_class",
+            "unexpected authorized OAuth client": "oauth_client",
+            "signed tenant claim mismatch": "tenant",
+            "required API scope missing": "scope",
+            "invalid role container": "roles",
+            "invalid scope claim": "scope_format",
+        }
+        print("DIAG: gateway_verifier_reason=" + categories.get(str(error), "other"))
         # This diagnostic may run ONLY after independently verifying the
         # SAME access token's RS256 signature and pinned issuer. Never use
         # decoded diagnostic claims to grant access or expose raw values.
@@ -103,8 +119,17 @@ def main() -> None:
             )
             print("DIAG: verified_gateway_missing=" +
                   classify_verified_gateway_claims(signed, CLIENT_ID))
-        except Exception:
-            print("DIAG: verified_gateway_missing=signature_or_issuer")
+        except Exception as diagnostic_error:
+            # The exception class is selected from a short allowlist only.
+            allowed = {
+                "OIDCError", "InvalidIssuerError", "InvalidSignatureError",
+                "InvalidAudienceError", "MissingRequiredClaimError",
+                "ExpiredSignatureError", "ImmatureSignatureError",
+                "DecodeError", "InvalidKeyError",
+            }
+            kind = type(diagnostic_error).__name__
+            print("DIAG: verified_gateway_unavailable=" +
+                  (kind if kind in allowed else "other"))
         raise
     if identity.sub != verified.subject.subject_id or (
         "gateway-reader" not in verified.subject.roles
