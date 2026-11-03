@@ -49,12 +49,16 @@ jobs:
           assert not data["services"]["db"].get("ports")
           print("PASS: only Keycloak loopback port is published")
           PY
+      - name: Prepare CI-only synthetic OIDC client and user
+        run: python3 scripts/prepare_ci_login_fixture.py
       - name: Start disposable local identity engine
         run: docker compose up -d
       - name: Verify OIDC metadata and public JWKS
         run: |
           python3 scripts/smoke_oidc.py
           python3 scripts/smoke_oidc_client.py
+      - name: Verify real synthetic browser form, code exchange and ID token
+        run: python3 scripts/smoke_login.py
       - name: Restart identity container and verify realm continuity
         run: |
           docker compose restart identity
@@ -64,3 +68,8 @@ jobs:
       - name: Stop isolated test services
         if: always()
         run: docker compose down --remove-orphans
+      - name: Remove synthetic ephemeral user credentials from CI runner
+        if: always()
+        run: |
+          rm -f /tmp/goreecloud-identity-ci-login.json
+          git restore -- realm/goreecloud-realm.json

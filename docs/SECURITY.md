@@ -11,7 +11,7 @@
 - [ ] Configure OIDC clients with exact redirect URIs, minimal scopes, PKCE, confidential-client restrictions where appropriate, and session policies.
 - [ ] Bind OAuth state, PKCE verifier and nonce to secure server-side browser sessions, and validate complete live login, logout, CSRF/session rotation and callback replay protection. The standalone OIDC development module does not provide a browser session server.
 - [ ] Audit trusted JWKS acquisition and rotation, issuer/audience/client restrictions, API authorization and live revocation requirements before integrating the optional token verifier.
-- [ ] Perform browser-based end-to-end authentication, logout, revocation, CSRF and account-recovery tests.
+- [ ] Perform browser-based end-to-end authentication, logout, revocation, CSRF and account-recovery tests. The synthetic CI form-login test is not a substitute for real app sessions, logout or revocation acceptance.
 - [ ] Test realm import behavior, upgrades, restores and rollback using non-production identity data.
 - [ ] Encrypt and restore-test persistent production database backups; document recovery point and recovery time objectives. The CI-only disposable restore smoke is not a substitute.
 - [ ] Secure database and internal management ports and protect metrics.

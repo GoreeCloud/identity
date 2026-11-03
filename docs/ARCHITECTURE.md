@@ -22,6 +22,10 @@ The optional Python helper in `src/goreecloud_identity/tokens.py` uses PyJWT to 
 
 The [OIDC relying-party module](OIDC_RELYING_PARTY.md) builds authorization-code/S256 PKCE requests, pins Keycloak discovery and signing-key URLs, and verifies synthetic RS256-signed ID tokens. Real browser sessions, registered clients, code exchange against a live Keycloak login, logout, revocation, and Gateway enforcement remain unimplemented.
 
+## Disposable end-to-end synthetic identity testing
+
+A [CI-only login harness](CI_E2E_LOGIN.md) seeds one temporary public PKCE client and synthetic user into the runner-only realm import, submits a real Keycloak login form using an isolated local cookie jar, intercepts the callback without opening a listener, exchanges the authorization code and validates its signed ID token. The test does not build a reusable browser session server, enable production credentials, or modify Gateway/VPS services. Runtime success requires an actual passing GitHub Actions execution.
+
 ## Production target (not implemented)
 
 - Dedicated hardened Keycloak runtime behind approved HTTPS termination; strict hostname, reverse-proxy and forwarding-header verification.
