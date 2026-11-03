@@ -15,7 +15,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 7. Groups, roles and directories | Keycloak upstream | Integration permissions and directory sync |
 | 8. External IdPs | Not configured | Federated providers with scoped credentials |
 | 9. Provisioning | Not integrated | SCIM inbound/outbound adapters |
-| 10. Authorization | Deny-by-default policy helper and development JWT-to-resource adapter; **signed tenant-claim mismatch defect confirmed; multi-tenant authorization acceptance blocked (#13)** | Require matching signed tenant claim, pass negative tests and CI; production enforcement, resource ownership and revocation |
+| 10. Authorization | Deny-by-default policy and JWT resource helper; signed tenant mismatch, absence and malformed claims now rejected (PR #14; CI 41732128857) | Production resource ownership enforcement, revocation and Gateway integration |
 | 11. Zero Trust | No production enforcement | Condition evaluation and gateway integration |
 | 12. Device identity | Not integrated | Certificates, trust attestations and compliance |
 | 13. Applications and SSO | Auth-code/S256 PKCE client, synthetic Keycloak login verified in CI; localhost-only WSGI HTTP example and socket-level CI flow verified (run 41718513319) | Production-grade web app, stable session store, logout/revocation and Gateway SSO |
