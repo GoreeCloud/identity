@@ -18,7 +18,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 10. Authorization | Original local deny-by-default policy helper | Trusted-token integration and enforcement tests |
 | 11. Zero Trust | No production enforcement | Condition evaluation and gateway integration |
 | 12. Device identity | Not integrated | Certificates, trust attestations and compliance |
-| 13. Applications and SSO | Development auth-code/S256 PKCE client core; CI-only real browser-form login and code exchange test added (runtime outcome must be checked) | Protected real application with server-side sessions, logout and Gateway SSO |
+| 13. Applications and SSO | Development auth-code/S256 PKCE client core; real synthetic CI browser-form login and signed ID-token exchange verified (run 41659751802) | Protected actual application with server-side sessions, logout and Gateway SSO |
 | 14. Identity proxy | Not implemented | GoreeCloud Gateway forward-auth integration |
 | 15. Remote access | Not implemented | Audit Guacamole/SSH/RDP/VNC approach |
 | 16. Self-service | Keycloak upstream account-console capability | GoreeCloud UI and secure recovery flow |
