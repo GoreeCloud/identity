@@ -18,6 +18,12 @@ Unknown routes, unsupported methods, non-loopback peers, unexpected Host, forwar
 
 The in-memory session store now supports issuing fresh per-page CSRF tokens to a server-rendered form while retaining only their SHA-256 digests. Rendering a new form invalidates the previous form's token. The login flow is single-use and rotates identifiers after successful verification.
 
+## Verified disposable CI evidence
+
+On November 3, 2026, [GitHub Actions run 41718513319](https://github.com/GoreeCloud/identity/actions/runs/41718513319) passed all 111 Python tests plus the real socket-level `127.0.0.1:8765` HTTP flow, synthetic Keycloak login, S256 PKCE code exchange, secure cookie response checks, session rotation, invalid-CSRF denial, successful local logout, container restart, isolated PostgreSQL restore and credential cleanup. [PR #10](https://github.com/GoreeCloud/identity/pull/10) merged as `8c68b2be5bb45868a0fd106110b50602b066c33a`.
+
+This establishes **only the loopback development integration**. It does not demonstrate public HTTPS, approved GoreeCloud UI, production Gateway integration or deployable identity infrastructure.
+
 ## Verification
 
 - `python3 -m unittest discover -s tests -v` exercises status codes, cookies, session rotation, per-request CSRF, unauthorized/malformed requests, callback replay, peer/host/proxy restrictions and logout with synthetic verified identities.
