@@ -32,6 +32,7 @@ class TokenVerificationTests(unittest.TestCase):
         claims = {
             "iss": self.issuer, "sub": "verified-user-1",
             "aud": self.audience, "azp": self.client,
+            "goreecloud_tenant": "household",
             "iat": now - 30, "nbf": now - 30, "exp": now + 300,
             "typ": "Bearer", "scope": "openid profile identity:read",
             "realm_access": {"roles": ["member"]},

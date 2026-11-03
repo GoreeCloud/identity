@@ -11,7 +11,7 @@ The `goreecloud_identity.tokens.verify_access_token` function validates **OAuth 
 - **Resource policy:** call the independent authorization engine after cryptographic verification, applying least privilege and tenant isolation. A valid signature alone is not permission to act.
 - **Transport:** only accept tokens over HTTPS. Never log full tokens, auth headers or private keys.
 - **Revocation:** offline JWT verification cannot detect all revoked or terminated sessions until expiry. Use short-lived tokens and appropriate live revocation/introspection when an application's threat model requires immediate disablement.
-- **Multi-tenancy:** this helper pins one configured trusted tenant to one issuer boundary. Organization-level isolation requires additional validated organization claims and per-resource checks.
+- **Signed tenant binding (development verified):** access tokens must contain a string-valued signed `goreecloud_tenant` claim exactly matching the independently configured resource tenant. Missing, wrong and malformed claims fail closed before subject construction ([PR #14](https://github.com/GoreeCloud/identity/pull/14), [CI run 41732128857](https://github.com/GoreeCloud/identity/actions/runs/41732128857)). This does not replace per-resource tenant ownership checks or live revocation.
 - **Token class:** Keycloak-style access-token payload must include `typ=Bearer` and `azp`. Other vendors/formats require an explicitly reviewed adapter.
 - **Risk:** never use for browser sign-in, OIDC auth-code/PKCE, refresh-token processing, or service-client login. A separate well-tested relying-party implementation remains necessary.
 

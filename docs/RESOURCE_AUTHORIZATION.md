@@ -16,7 +16,7 @@ This integration joins the existing RS256 OAuth bearer-token verifier and explic
 
 `goreecloud_identity.resource_server.ResourceAuthorizer` validates the JWT's expected RS256 signature, issuer, resource audience, authorized OAuth client (`azp`), token class `Bearer`, issuance/expiration/lifetime and mandatory scopes. It then converts the verified token to a trusted subject and evaluates explicit resource policies. Any failed authentication is a generic denial. A cryptographically correct token does not grant access absent an allow rule, and an explicit deny overrides allow.
 
-`ResourceIdentityConfig` binds a single configured issuer, resource audience, allowed OAuth client, tenant ID and **non-empty** required API scopes. The tenant and resource ownership relationship still requires the consuming service to verify against its own trusted data: a caller-provided tenant string is not proof of ownership. Likewise the client IP for policy evaluation must come from the trusted socket peer or validated proxy boundary, never arbitrary `X-Forwarded-For` text.
+`ResourceIdentityConfig` binds a trusted issuer, audience, client, tenant and required scopes. Verified [PR #14](https://github.com/GoreeCloud/identity/pull/14) now rejects tokens missing a matching signed `goreecloud_tenant` claim (149 tests and Keycloak CI passed). Applications must separately verify resource ownership; a matching tenant claim is not blanket permission. Client IP must come from a trusted peer or validated proxy, not arbitrary forwarded headers.
 
 Policies and trust roots must be privileged application configuration, not computed from request/query/authorization-header fields.
 

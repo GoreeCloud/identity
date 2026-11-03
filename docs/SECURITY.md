@@ -19,7 +19,8 @@
 - [ ] Encrypt and restore-test persistent production database backups; document recovery point and recovery time objectives. The CI-only disposable restore smoke is not a substitute.
 - [ ] Secure database and internal management ports and protect metrics.
 - [ ] Review Keycloak version advisories and image digests; add dependency/container scanning.
-- [ ] Verify per-tenant authorization isolation; no role name alone grants cross-tenant access.
+- [x] Signed tenant claim mismatch regression fixed in Python verifier (PR #14, CI 41732128857: 149 tests and disposable Keycloak checks passed). Missing, conflicting and malformed tenant claims fail closed.
+- [ ] Verify resource ownership, true multi-tenant authorization, live revocation and Gateway integration before production acceptance.
 - [ ] Review logs for privacy, retention, least privilege and detection efficacy.
 - [ ] Verify login theme with mobile/desktop, keyboard, screen reader, dark/light and contrast testing.
 - [ ] Set up CI integration tests for OIDC discovery, login, MFA, refresh, revocation and failure scenarios.
