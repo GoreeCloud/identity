@@ -18,7 +18,7 @@
 - [ ] Encrypt and restore-test persistent production database backups; document recovery point and recovery time objectives. The CI-only disposable restore smoke is not a substitute.
 - [ ] Secure database and internal management ports and protect metrics.
 - [ ] Review Keycloak version advisories and image digests; add dependency/container scanning.
-- [ ] Verify per-tenant authorization isolation; no role name alone grants cross-tenant access.
+- [ ] **P0 security gate — [issue #13](https://github.com/GoreeCloud/identity/issues/13):** require the signed access token's tenant claim to match the configured resource tenant. Negative tests reproduced acceptance of missing/mismatched/malformed claims. Verify the fix in the full suite and disposable Keycloak CI before trusting the Python adapter for multi-tenant authorization; roles alone cannot grant cross-tenant access.
 - [ ] Review logs for privacy, retention, least privilege and detection efficacy.
 - [ ] Verify login theme with mobile/desktop, keyboard, screen reader, dark/light and contrast testing.
 - [ ] Set up CI integration tests for OIDC discovery, login, MFA, refresh, revocation and failure scenarios.
