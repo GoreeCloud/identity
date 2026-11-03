@@ -32,7 +32,7 @@ Local tests generate disposable RS256 signing keys and signed JWTs in memory. Th
 
 GitHub's disposable CI Keycloak runtime invokes `scripts/smoke_jwks_trust.py` to confirm the pinned public key retrieval against actual Keycloak, cache reuse and unknown-key rejection. Adding this script is **not proof** of a passing integration test; only inspect the completed GitHub Actions run before claiming success.
 
-A separate [synthetic Keycloak Gateway-claim contract](GATEWAY_CLAIMS.md) has been added to CI. It attempts a real Authorization Code + S256 PKCE login and checks signed resource audience, client, role, scope and tenant claims. The existence of this test is **not** evidence of a successful run until its GitHub Actions result has been inspected.
+A separate [synthetic Keycloak Gateway-claim contract](GATEWAY_CLAIMS.md) has been added to CI. It attempts a real Authorization Code + S256 PKCE login and checks signed resource audience, client, role, scope and tenant claims. [CI run 41737527198](https://github.com/GoreeCloud/identity/actions/runs/41737527198) **passed** with 161 tests and real Keycloak-issued access-token verification, including required audience/client/scope/role/signed-tenant claims and wrong-audience rejection. A running Go Gateway resource server was not exercised.
 
 ## Still required before Gateway or production
 
