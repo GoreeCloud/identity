@@ -29,6 +29,8 @@ Keycloak 26 may mark its browser authentication cookies `Secure` even for its lo
 
 All fixture secrets exist only on the disposable runner, in an owner-readable temporary file and temporary realm import representation. No live account, real email address, secret, token, login callback URL, browser HTML or production hostname should be displayed in CI output or published as an artifact.
 
+A separate **CI socket-level HTTP smoke** in `scripts/smoke_http_app.py` exercises the loopback WSGI demonstration with the same disposable synthetic Keycloak fixture: actual HTTP `Set-Cookie` delivery, login callback, authenticated session, rejected invalid CSRF logout and verified local logout. This adds an HTTP interface test, but does not make the app publicly deployed or production-ready.
+
 ## Safety and scope restrictions
 
 - The fixture generator checks that the process is inside GoreeCloud's GitHub CI and that Docker Compose declares the expected loopback Keycloak listener, unexposed PostgreSQL service, development startup command and local hostname. It refuses any nonempty users or OAuth clients in the original realm.

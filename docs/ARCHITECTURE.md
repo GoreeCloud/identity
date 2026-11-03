@@ -20,7 +20,7 @@ The optional Python helper in `src/goreecloud_identity/tokens.py` uses PyJWT to 
 
 ## Development OIDC PKCE client core
 
-The [OIDC relying-party module](OIDC_RELYING_PARTY.md) builds authorization-code/S256 PKCE requests, pins Keycloak discovery and signing-key URLs, and verifies synthetic RS256-signed ID tokens. Real browser sessions, registered clients, code exchange against a live Keycloak login, logout, revocation, and Gateway enforcement remain unimplemented.
+The [OIDC relying-party module](OIDC_RELYING_PARTY.md) builds authorization-code/S256 PKCE requests, pins Keycloak discovery and signing-key URLs, and verifies RS256-signed ID tokens. A real synthetic login/code exchange was verified in disposable CI. Real production browser sessions, durable storage, global revocation and Gateway enforcement remain unimplemented.
 
 ## Disposable end-to-end synthetic identity testing
 
@@ -28,7 +28,7 @@ A [CI-only login harness](CI_E2E_LOGIN.md) seeds one temporary public PKCE clien
 
 ## Development browser-session boundary
 
-The [original browser-session primitive](BROWSER_SESSIONS.md) keeps one-time OIDC PKCE state and nonce server-side, issues Secure/HttpOnly host-only session cookies, rotates the identifier on login, requires CSRF tokens for protected state changes, enforces hard expiry and supports local logout. It is intentionally in-memory, one-process and not connected to an HTTP server, reverse proxy, database or production identity service.
+The [original browser-session primitive](BROWSER_SESSIONS.md) keeps one-time OIDC PKCE state and nonce server-side, issues Secure/HttpOnly host-only cookies, rotates on login, and provides CSRF, hard expiry and local logout. A [localhost-only WSGI example](LOOPBACK_HTTP.md) demonstrates actual HTTP cookie delivery without an external listener. Sessions remain in-memory, one-process, with no production HTTPS, reverse proxy, persistent database, or Gateway integration.
 
 ## Production target (not implemented)
 

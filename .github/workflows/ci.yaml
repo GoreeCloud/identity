@@ -59,6 +59,8 @@ jobs:
           python3 scripts/smoke_oidc_client.py
       - name: Verify real synthetic browser form, code exchange and ID token
         run: python3 scripts/smoke_login.py
+      - name: Verify local HTTP cookie delivery and logout against real Keycloak
+        run: python3 scripts/smoke_http_app.py
       - name: Restart identity container and verify realm continuity
         run: |
           docker compose restart identity
