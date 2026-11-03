@@ -41,9 +41,81 @@ def build_fixture(base: dict, username: str, password: str) -> dict:
         "redirectUris": [CALLBACK_URI],
         "webOrigins": [],
         "attributes": {"pkce.code.challenge.method": "S256"},
+        "fullScopeAllowed": False,
+        "defaultClientScopes": ["basic", "profile", "gateway:read"],
+    }]
+    data["scopeMappings"] = [{"client": CLIENT_ID, "roles": ["gateway-reader"]}]
+    data["roles"] = {"realm": [
+        {"name": "gateway-reader", "description": "Synthetic CI-only Gateway reader role"}
+    ]}
+    # Imported realms with explicit clientScopes need an explicit OIDC
+    # profile scope for the smoke client's 'openid profile' request.
+    # Do not add additional privileges or production accounts.
+    data["clientScopes"] = [{
+        "name": "basic",
+        "protocol": "openid-connect",
+        "attributes": {"include.in.token.scope": "false"},
+        "protocolMappers": [{
+            "name": "ci-subject",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-sub-mapper",
+            "config": {
+                "access.token.claim": "true",
+                "introspection.token.claim": "true",
+            },
+        }],
+    }, {
+        "name": "profile",
+        "protocol": "openid-connect",
+        "attributes": {"include.in.token.scope": "true"},
+        "protocolMappers": [],
+    }, {
+        "name": "gateway:read",
+        "protocol": "openid-connect",
+        "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false",
+        },
+        "protocolMappers": [
+            {
+                "name": "ci-realm-roles",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-usermodel-realm-role-mapper",
+                "config": {
+                    "claim.name": "realm_access.roles",
+                    "jsonType.label": "String",
+                    "multivalued": "true",
+                    "access.token.claim": "true",
+                    "id.token.claim": "false",
+                },
+            },
+            {
+                "name": "ci-gateway-resource-audience",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-audience-mapper",
+                "config": {
+                    "included.custom.audience": "goreecloud-gateway-console",
+                    "access.token.claim": "true",
+                    "id.token.claim": "false",
+                },
+            },
+            {
+                "name": "ci-tenant-claim",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-hardcoded-claim-mapper",
+                "config": {
+                    "claim.name": "goreecloud_tenant",
+                    "claim.value": "family",
+                    "jsonType.label": "String",
+                    "access.token.claim": "true",
+                    "id.token.claim": "false",
+                },
+            },
+        ],
     }]
     data["users"] = [{
         "username": username,
+        "realmRoles": ["gateway-reader"],
         "enabled": True,
         "email": "synthetic-ci-login@example.test",
         "emailVerified": True,

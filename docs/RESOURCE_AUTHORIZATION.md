@@ -32,6 +32,8 @@ Local tests generate disposable RS256 signing keys and signed JWTs in memory. Th
 
 GitHub's disposable CI Keycloak runtime invokes `scripts/smoke_jwks_trust.py` to confirm the pinned public key retrieval against actual Keycloak, cache reuse and unknown-key rejection. Adding this script is **not proof** of a passing integration test; only inspect the completed GitHub Actions run before claiming success.
 
+A separate [synthetic Keycloak Gateway-claim contract](GATEWAY_CLAIMS.md) has been added to CI. It attempts a real Authorization Code + S256 PKCE login and checks signed resource audience, client, role, scope and tenant claims. The existence of this test is **not** evidence of a successful run until its GitHub Actions result has been inspected.
+
 ## Still required before Gateway or production
 
 - An independently reviewed Go or other supported server integration with trusted issuer and audience configuration, secure token transport, request authentication and application permissions.

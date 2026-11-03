@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 import sys
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode, urljoin, urlsplit
+from urllib.parse import urlencode, urljoin, urlsplit, parse_qs
 from urllib.request import build_opener, HTTPCookieProcessor, HTTPRedirectHandler, ProxyHandler, Request
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -149,7 +149,27 @@ def authorize_browser(url: str, username: str, password: str) -> str:
             target = urljoin(current, location)
             assert_local_url(target, allow_callback=True)
             if target.startswith(CALLBACK_URI + "?"):
-                raise OIDCError("authorization succeeded without test user sign-in")
+                # The provider may reject a malformed CI client *before*
+                # showing any login form. Show only a fixed, allowlisted OAuth
+                # error category; never log callback query values or secrets.
+                response_fields = parse_qs(urlsplit(target).query, keep_blank_values=True)
+                errors = response_fields.get("error", [])
+                permitted = {
+                    "invalid_request", "invalid_scope", "unauthorized_client",
+                    "access_denied", "login_required", "temporarily_unavailable",
+                }
+                category = errors[0] if len(errors) == 1 and errors[0] in permitted else "none"
+                if category == "invalid_scope":
+                    # The provider's description may include arbitrary text;
+                    # print only trusted literals, never the description itself.
+                    descriptions = response_fields.get("error_description", [])
+                    raw_description = (
+                        descriptions[0].lower() if len(descriptions) == 1 else ""
+                    )
+                    known_scopes = ("profile", "openid", "gateway:read", "roles", "email")
+                    names = [name for name in known_scopes if name in raw_description]
+                    category = "invalid_scope:" + (",".join(names) or "unspecified")
+                raise OIDCError(f"pre-login callback before synthetic sign-in ({category})")
             current = target
             continue
         parser = LoginForm()

@@ -55,6 +55,8 @@ A [pinned-issuer signing-key cache and resource authorization adapter](docs/RESO
 **Tenant-claim boundary verified in development:** [PR #14](https://github.com/GoreeCloud/identity/pull/14) now requires the RS256-verified access token's signed `goreecloud_tenant` claim to match independently configured resource tenancy. Missing, conflicting and malformed claims are rejected; [CI run 41732128857](https://github.com/GoreeCloud/identity/actions/runs/41732128857) passed 149 Python tests and disposable Keycloak runtime checks. This is **not** production tenant-resource ownership enforcement, global token revocation, or a live Gateway rollout. The independent Go Gateway OIDC adapter remains disabled by default.
  Its 142-test suite and [real disposable Keycloak key-source check](https://github.com/GoreeCloud/identity/actions/runs/41720284851) passed. It is an original **Python development component**, not a deployed Gateway or Zero Trust access service. Token revocation and production key-rotation acceptance remain outstanding.
 
+A [CI-only Gateway token claim contract](docs/GATEWAY_CLAIMS.md) creates a synthetic scoped Keycloak client, realm role and tenant/audience protocol mappers **only in the disposable CI runner**. It validates a real authorization-code access token against the existing pinned signing-key verifier and exact scope/tenant requirements. It does not establish production Gateway sign-in, live token revocation or web/Android PKCE clients.
+
 ## Project documents
 
 - [Capability and implementation matrix](docs/CAPABILITIES.md)
