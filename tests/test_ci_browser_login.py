@@ -5,12 +5,13 @@ from types import SimpleNamespace
 from urllib.request import Request
 import sys
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from prepare_ci_login_fixture import build_fixture, CLIENT_ID, CALLBACK_URI
-from smoke_login import LoginForm, ExactLoopbackCookiePolicy, assert_local_url
+from smoke_login import LoginForm, ExactLoopbackCookiePolicy, assert_local_url, authorize_browser
 from goreecloud_identity.oidc import OIDCError
 
 
@@ -98,6 +99,23 @@ class BrowserNavigationTests(unittest.TestCase):
             with self.subTest(url=url):
                 self.assertFalse(policy.return_ok_secure(secure, Request(url)))
         self.assertTrue(policy.return_ok_secure(secure, Request("https://example.test/auth")))
+
+    def test_prelogin_oauth_error_does_not_reveal_callback_parameters(self):
+        auth = "http://localhost:8080/realms/goreecloud/protocol/openid-connect/auth?client_id=synthetic"
+        callback = CALLBACK_URI + "?error=invalid_scope&error_description=secret-diagnostic&state=secret-state"
+        with patch("smoke_login.read_response", return_value=(302, callback, "")):
+            with self.assertRaisesRegex(OIDCError, "pre-login callback before synthetic sign-in \\(invalid_scope\\)") as raised:
+                authorize_browser(auth, "gc-ci-user", "fake-credential")
+        self.assertNotIn("secret-diagnostic", str(raised.exception))
+        self.assertNotIn("secret-state", str(raised.exception))
+
+    def test_unknown_prelogin_oauth_errors_are_redacted(self):
+        auth = "http://localhost:8080/realms/goreecloud/protocol/openid-connect/auth?client_id=synthetic"
+        callback = CALLBACK_URI + "?error=private-error-marker&state=secret-state"
+        with patch("smoke_login.read_response", return_value=(302, callback, "")):
+            with self.assertRaisesRegex(OIDCError, "pre-login callback before synthetic sign-in \\(none\\)") as raised:
+                authorize_browser(auth, "gc-ci-user", "fake-credential")
+        self.assertNotIn("private-error-marker", str(raised.exception))
 
     def test_extracts_keycloak_form_action(self):
         parser = LoginForm()
