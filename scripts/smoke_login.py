@@ -159,6 +159,16 @@ def authorize_browser(url: str, username: str, password: str) -> str:
                     "access_denied", "login_required", "temporarily_unavailable",
                 }
                 category = errors[0] if len(errors) == 1 and errors[0] in permitted else "none"
+                if category == "invalid_scope":
+                    # The provider's description may include arbitrary text;
+                    # print only trusted literals, never the description itself.
+                    descriptions = response_fields.get("error_description", [])
+                    raw_description = (
+                        descriptions[0].lower() if len(descriptions) == 1 else ""
+                    )
+                    known_scopes = ("profile", "openid", "gateway:read", "roles", "email")
+                    names = [name for name in known_scopes if name in raw_description]
+                    category = "invalid_scope:" + (",".join(names) or "unspecified")
                 raise OIDCError(f"pre-login callback before synthetic sign-in ({category})")
             current = target
             continue
