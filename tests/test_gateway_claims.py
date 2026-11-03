@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from prepare_ci_login_fixture import build_fixture
-from smoke_gateway_claims import check_gateway_claims
+from smoke_gateway_claims import check_gateway_claims, classify_verified_gateway_claims
 
 
 class GatewayClaimContractTests(unittest.TestCase):
@@ -63,6 +63,21 @@ class GatewayClaimContractTests(unittest.TestCase):
             "goreecloud_tenant": "family",
             "realm_access": {"roles": ["gateway-reader"]},
         }
+
+    def test_verified_claim_diagnostic_is_static_and_never_prints_values(self):
+        self.assertEqual(
+            classify_verified_gateway_claims(self.example(), "goreecloud-ci-public"),
+            "none",
+        )
+        claims = self.example()
+        secret = "private-credential-marker"
+        claims.update({
+            "aud": [secret], "azp": secret, "goreecloud_tenant": secret,
+            "scope": secret, "realm_access": {"roles": [secret]}, "typ": secret,
+        })
+        categories = classify_verified_gateway_claims(claims, "goreecloud-ci-public")
+        self.assertEqual(categories, "audience,client,tenant,scope,role,type")
+        self.assertNotIn(secret, categories)
 
     def test_accepts_gateway_contract_after_token_verification(self):
         check_gateway_claims(self.example(), "goreecloud-ci-public")
