@@ -61,6 +61,7 @@ class ResourceAuthorizationTests(unittest.TestCase):
         out = {
             "iss": self.issuer, "sub": "synthetic-user",
             "aud": self.config.audience, "azp": self.config.authorized_party,
+            "goreecloud_tenant": "family",
             "iat": t - 10, "exp": t + 300, "nbf": t - 10,
             "typ": "Bearer", "scope": "openid gateway:read",
             "realm_access": {"roles": ["gateway-reader"]},
