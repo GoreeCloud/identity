@@ -23,7 +23,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 15. Remote access | Not implemented | Audit Guacamole/SSH/RDP/VNC approach |
 | 16. Self-service | Keycloak upstream account-console capability | GoreeCloud UI and secure recovery flow |
 | 17. Multi-tenancy | One initial development realm | Tenant isolation and organizations |
-| 18. API/machine identity | Upstream service accounts; RS256 verifier and pinned Keycloak JWKS (CI passed). Gateway-claim synthetic Keycloak authorization-code token test added (runtime pending) | Actual Gateway Go process acceptance, client grants, revocation and agent integration |
+| 18. API/machine identity | Upstream service accounts; RS256 verifier and pinned Keycloak JWKS (CI passed). Real disposable Keycloak Gateway audience/client/scope/role/signed tenant token contract verified (PR #12, CI 41737527198: 161 tests); no running Gateway Go acceptance yet | Actual Gateway Go process acceptance, client grants, revocation and agent integration |
 | 19. AI agents | Not implemented | Delegation, consent and actor attribution |
 | 20. Privileged access | Not implemented | Least privilege, access requests and time limits |
 | 21. Sessions/tokens/consent | Single-process server-side session primitive and localhost HTTP example (cookie delivery, rotation, CSRF, expiry, local logout); CI socket test passed (run 41718513319) | HTTPS application, persistent/distributed session store, revocation and production logout |
