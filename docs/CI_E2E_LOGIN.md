@@ -19,6 +19,8 @@ After Keycloak starts, `scripts/smoke_login.py`:
 
 Redirects and form actions are restricted to the local realm and login-action paths. JSON responses and HTML are size-bounded, network timeouts are finite, redirects from the transport layer are disabled, and proxy environment variables are ignored.
 
+Keycloak 26 may mark its browser authentication cookies `Secure` even for its localhost development server. The **CI-only** browser adapter makes a narrowly scoped secure-context exception for `http://localhost:8080`, matching browser localhost behavior while rejecting that exception for other HTTP origins. This never changes Keycloak's cookies, transport settings, or any real application cookie policy.
+
 All fixture secrets exist only on the disposable runner, in an owner-readable temporary file and temporary realm import representation. No live account, real email address, secret, token, login callback URL, browser HTML or production hostname should be displayed in CI output or published as an artifact.
 
 ## Safety and scope restrictions
