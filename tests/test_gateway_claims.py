@@ -26,7 +26,8 @@ class GatewayClaimContractTests(unittest.TestCase):
         self.assertEqual(ci["users"][0]["realmRoles"], ["gateway-reader"])
         self.assertEqual(ci["roles"]["realm"][0]["name"], "gateway-reader")
         self.assertFalse(ci["clients"][0]["fullScopeAllowed"])
-        self.assertEqual(ci["clients"][0]["scopeMappings"], ["gateway-reader"])
+        self.assertNotIn("scopeMappings", ci["clients"][0])
+        self.assertEqual(ci["scopeMappings"], [{"client": "goreecloud-ci-public", "roles": ["gateway-reader"]}])
         self.assertIn("gateway:read", ci["clients"][0]["defaultClientScopes"])
 
     def test_synthetic_client_scope_only_adds_gateway_access_claims(self):
