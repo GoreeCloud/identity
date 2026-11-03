@@ -7,7 +7,7 @@ the dummy callback address is parsed, NEVER followed or network-requested.
 from __future__ import annotations
 
 from html.parser import HTMLParser
-from http.cookiejar import CookieJar
+from http.cookiejar import CookieJar, DefaultCookiePolicy
 import json
 from pathlib import Path
 import sys
@@ -27,6 +27,32 @@ from prepare_ci_login_fixture import (
 
 ISSUER = "http://localhost:8080/realms/goreecloud"
 LOGIN_PREFIX = ISSUER + "/login-actions/"
+
+
+class ExactLoopbackCookiePolicy(DefaultCookiePolicy):
+    """Match browsers' secure-context exception only for the CI localhost origin.
+
+    Keycloak 26 may mark AUTH_SESSION_ID and KC_RESTART Secure even on its
+    localhost development HTTP listener. Python's standard cookie jar refuses
+    to send Secure cookies over HTTP. This narrow exception is test-only:
+    never apply to external hosts, real proxy traffic, or application sessions.
+    """
+
+    def return_ok_secure(self, cookie, request):
+        try:
+            parsed = urlsplit(request.full_url)
+            exact_dev_origin = (
+                parsed.scheme == "http"
+                and parsed.hostname == "localhost"
+                and parsed.port == 8080
+                and parsed.username is None
+                and parsed.password is None
+            )
+        except (AttributeError, ValueError):
+            exact_dev_origin = False
+        if cookie.secure and exact_dev_origin:
+            return True
+        return super().return_ok_secure(cookie, request)
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -112,7 +138,7 @@ def read_response(opener, url: str, data: bytes | None = None, referer: str | No
 def authorize_browser(url: str, username: str, password: str) -> str:
     """Perform ONE synthetic password-form login; never use direct grant."""
     assert_local_url(url)
-    jar = CookieJar()
+    jar = CookieJar(policy=ExactLoopbackCookiePolicy())
     opener = build_opener(ProxyHandler({}), HTTPCookieProcessor(jar), NoRedirect())
     current = url
     for _ in range(8):
