@@ -48,6 +48,8 @@ The optional [RS256 bearer-token verification helper](docs/TOKEN_VERIFICATION.md
 
 GitHub-hosted CI performs offline checks, disposable runtime OIDC discovery/restart checks and a **CI-only** PostgreSQL backup/restore smoke into a separately created database. A [CI-only synthetic browser-form login test](docs/CI_E2E_LOGIN.md) now attempts a real Authorization Code + S256 PKCE exchange against a disposable client and user. This is not the application-side secure session implementation or a public deployment. The backup script refuses execution outside the expected GitHub Actions context; this is **not** a production backup policy or disaster-recovery plan. CI success must be verified against actual run results before being claimed.
 
+A new [development-only server-side browser session primitive](docs/BROWSER_SESSIONS.md) binds one-time OIDC/PKCE transactions to host-only Secure/HttpOnly browser cookies, rotates the session identifier after login, enforces a hard expiry, adds CSRF checks, and supports local logout. It is deliberately in-memory, has no HTTP listener, and is **not** a production BFF, Gateway SSO integration or deployed login page.
+
 ## Project documents
 
 - [Capability and implementation matrix](docs/CAPABILITIES.md)

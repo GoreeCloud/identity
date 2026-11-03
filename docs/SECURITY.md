@@ -9,7 +9,7 @@
 - [ ] Store database and bootstrap credentials in approved secret storage, not cleartext env files copied to servers.
 - [ ] Configure verified SMTP before enabling password recovery and email verification.
 - [ ] Configure OIDC clients with exact redirect URIs, minimal scopes, PKCE, confidential-client restrictions where appropriate, and session policies.
-- [ ] Bind OAuth state, PKCE verifier and nonce to secure server-side browser sessions, and validate complete live login, logout, CSRF/session rotation and callback replay protection. The standalone OIDC development module does not provide a browser session server.
+- [ ] Integrate and verify the offline-tested [in-memory browser session primitive](BROWSER_SESSIONS.md) behind a real HTTPS application boundary; test delivered Secure/HttpOnly/SameSite cookies, actual browser CSRF/session rotation, callback replay, multi-process safety, account logout and revocation. The code alone does not establish any deployed HTTP session service.
 - [ ] Audit trusted JWKS acquisition and rotation, issuer/audience/client restrictions, API authorization and live revocation requirements before integrating the optional token verifier.
 - [ ] Perform browser-based end-to-end authentication, logout, revocation, CSRF and account-recovery tests. The synthetic CI form-login test is not a substitute for real app sessions, logout or revocation acceptance.
 - [ ] Test realm import behavior, upgrades, restores and rollback using non-production identity data.

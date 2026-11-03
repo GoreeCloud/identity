@@ -21,7 +21,7 @@ After Keycloak starts, `scripts/smoke_login.py`:
 3. Uses a local cookie jar to submit the synthetic credentials to the **real Keycloak browser login form** (not the OAuth resource-owner password grant).
 4. Intercepts the callback redirect without sending any request to the non-existent callback listener.
 5. Exchanges the authorization code at Keycloak's pinned local token endpoint with the original PKCE verifier.
-6. Verifies the returned ID token's RS256 signature and expected issuer, client audience, nonce and expiry. It prints only a high-level pass/fail result.
+6. Verifies the returned ID token's RS256 signature and expected issuer, client audience, nonce and expiry through the in-memory browser-session manager.\n7. Confirms the pre-login session cookie was rotated away, the authenticated session is present, its CSRF token verifies, and local logout removes it. The test still does not serve HTTP application cookies to a real browser. Only high-level pass/fail results are printed.
 
 Redirects and form actions are restricted to the local realm and login-action paths. JSON responses and HTML are size-bounded, network timeouts are finite, redirects from the transport layer are disabled, and proxy environment variables are ignored.
 

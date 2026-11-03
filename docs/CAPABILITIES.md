@@ -26,7 +26,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 18. API/machine identity | Upstream service account support and optional standalone RS256 token verification helper | Trusted JWKS source, scoped client credentials and end-to-end resource enforcement |
 | 19. AI agents | Not implemented | Delegation, consent and actor attribution |
 | 20. Privileged access | Not implemented | Least privilege, access requests and time limits |
-| 21. Sessions/tokens/consent | Keycloak upstream capabilities | End-to-end revocation and logout testing |
+| 21. Sessions/tokens/consent | Upstream Keycloak plus offline-tested original one-process browser-session primitive (Secure/HttpOnly/SameSite host-only cookies, state binding, rotation, CSRF, expiry, local logout); not deployed | HTTPS application integration, persistent/distributed sessions, revocation and production logout tests |
 | 22. Auditing | Basic upstream event subsystem | Events, retention, protected monitoring |
 | 23. Notifications | Not configured | Verified SMTP/webhook transport |
 | 24. Developer extensions | Original Python policy library present | Authenticated APIs, SDKs and contract tests |
