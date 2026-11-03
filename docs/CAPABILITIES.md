@@ -18,7 +18,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 10. Authorization | Original local deny-by-default policy helper | Trusted-token integration and enforcement tests |
 | 11. Zero Trust | No production enforcement | Condition evaluation and gateway integration |
 | 12. Device identity | Not integrated | Certificates, trust attestations and compliance |
-| 13. Applications and SSO | Development auth-code/S256 PKCE client core; real synthetic CI browser-form login and signed ID-token exchange verified (run 41659751802) | Protected actual application with server-side sessions, logout and Gateway SSO |
+| 13. Applications and SSO | Auth-code/S256 PKCE client, synthetic Keycloak login verified in CI; localhost-only WSGI HTTP example added (CI socket check pending) | Production-grade web app, stable session store, logout/revocation and Gateway SSO |
 | 14. Identity proxy | Not implemented | GoreeCloud Gateway forward-auth integration |
 | 15. Remote access | Not implemented | Audit Guacamole/SSH/RDP/VNC approach |
 | 16. Self-service | Keycloak upstream account-console capability | GoreeCloud UI and secure recovery flow |
@@ -26,7 +26,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 18. API/machine identity | Upstream service account support and optional standalone RS256 token verification helper | Trusted JWKS source, scoped client credentials and end-to-end resource enforcement |
 | 19. AI agents | Not implemented | Delegation, consent and actor attribution |
 | 20. Privileged access | Not implemented | Least privilege, access requests and time limits |
-| 21. Sessions/tokens/consent | Upstream Keycloak plus offline-tested original one-process browser-session primitive (Secure/HttpOnly/SameSite host-only cookies, state binding, rotation, CSRF, expiry, local logout); not deployed | HTTPS application integration, persistent/distributed sessions, revocation and production logout tests |
+| 21. Sessions/tokens/consent | Single-process server-side session primitive and localhost HTTP example (cookie delivery, rotation, CSRF, expiry, local logout); CI socket check pending | HTTPS application, persistent/distributed session store, revocation and production logout |
 | 22. Auditing | Basic upstream event subsystem | Events, retention, protected monitoring |
 | 23. Notifications | Not configured | Verified SMTP/webhook transport |
 | 24. Developer extensions | Original Python policy library present | Authenticated APIs, SDKs and contract tests |

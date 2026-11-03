@@ -10,6 +10,7 @@
 - [ ] Configure verified SMTP before enabling password recovery and email verification.
 - [ ] Configure OIDC clients with exact redirect URIs, minimal scopes, PKCE, confidential-client restrictions where appropriate, and session policies.
 - [ ] Integrate and verify the offline-tested [in-memory browser session primitive](BROWSER_SESSIONS.md) behind a real HTTPS application boundary; test delivered Secure/HttpOnly/SameSite cookies, actual browser CSRF/session rotation, callback replay, multi-process safety, account logout and revocation. The code alone does not establish any deployed HTTP session service.
+- [ ] Replace the [loopback-only HTTP test example](LOOPBACK_HTTP.md) with a reviewed production service before any public access. Real HTTPS, distributed sessions, rate limits, auditability and GoreeCloud UI acceptance remain unverified.
 - [ ] Audit trusted JWKS acquisition and rotation, issuer/audience/client restrictions, API authorization and live revocation requirements before integrating the optional token verifier.
 - [ ] Perform browser-based end-to-end authentication, logout, revocation, CSRF and account-recovery tests. The synthetic CI form-login test is not a substitute for real app sessions, logout or revocation acceptance.
 - [ ] Test realm import behavior, upgrades, restores and rollback using non-production identity data.

@@ -180,6 +180,16 @@ class BrowserSessionTests(unittest.TestCase):
         self.assertFalse(self.manager.verify_csrf(fresh, ""))
         self.assertFalse(self.manager.verify_csrf(fresh, "x" * 300))
 
+    def test_issuing_new_form_csrf_replaces_old_digest(self):
+        _, cookie, callback = self.start()
+        completed = self.finish(cookie, callback)
+        fresh = completed.set_cookie.split(";", 1)[0]
+        self.assertIsNone(self.manager.issue_csrf(cookie))
+        token = self.manager.issue_csrf(fresh)
+        self.assertIsInstance(token, str)
+        self.assertFalse(self.manager.verify_csrf(fresh, completed.csrf_token))
+        self.assertTrue(self.manager.verify_csrf(fresh, token))
+
     def test_logout_without_session_also_clears_browser_cookie(self):
         result = self.manager.logout("invalid-cookie")
         self.assertIn("Max-Age=0", result)

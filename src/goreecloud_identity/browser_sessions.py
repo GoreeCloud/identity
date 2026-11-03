@@ -179,6 +179,26 @@ class BrowserSessionManager:
             record = self._records.get(key)
             return record.identity if record is not None else None
 
+    def issue_csrf(self, cookie_header: str) -> str | None:
+        """Mint a fresh form CSRF token for an already authenticated session.
+
+        The token is returned once to the trusted server-side HTTP renderer.
+        Only its digest remains in this bounded in-process session store.
+        Generating a new form invalidates the previous token.
+        """
+        key = _cookie_hash(cookie_header)
+        if key is None:
+            return None
+        now = self._clock()
+        with self._lock:
+            self._prune_locked(now)
+            record = self._records.get(key)
+            if record is None or record.identity is None:
+                return None
+            token = secrets.token_urlsafe(32)
+            record.csrf_digest = sha256(token.encode("ascii")).digest()
+            return token
+
     def verify_csrf(self, cookie_header: str, submitted_token: str) -> bool:
         if (not isinstance(submitted_token, str) or
                 _CSRF_VALUE.fullmatch(submitted_token) is None):

@@ -42,13 +42,13 @@ python -m unittest discover -s tests -v
 python scripts/check_config.py
 ```
 
-The development-only [OIDC Authorization Code + PKCE relying-party core](docs/OIDC_RELYING_PARTY.md) implements scoped issuer discovery, S256 challenge, one-time state/nonce, token exchange and signed ID-token validation. It does **not** provide browser session storage, a registered Keycloak client, actual browser login or Gateway SSO. Its synthetic tests must not be mistaken for a successful live authorization code exchange.
+The development-only [OIDC Authorization Code + PKCE relying-party core](docs/OIDC_RELYING_PARTY.md) implements issuer-bound discovery, S256 challenges, state/nonce, code exchange and signed ID-token validation. Disposable GitHub CI has verified a real synthetic Keycloak browser login. The repository still does **not** provide production user login, persistent browser sessions, real application SSO, or Gateway integration.
 
 The optional [RS256 bearer-token verification helper](docs/TOKEN_VERIFICATION.md) tests issuer, audience, signer, client, token type, lifetime and scopes using a trusted externally supplied JWKS. It is not yet integrated with any application, and it does **not** fetch or establish trust in signing keys by itself. Do not treat it as a deployed access gateway or browser SSO implementation.
 
 GitHub-hosted CI performs offline checks, disposable runtime OIDC discovery/restart checks and a **CI-only** PostgreSQL backup/restore smoke into a separately created database. A [CI-only synthetic browser-form login test](docs/CI_E2E_LOGIN.md) now attempts a real Authorization Code + S256 PKCE exchange against a disposable client and user. This is not the application-side secure session implementation or a public deployment. The backup script refuses execution outside the expected GitHub Actions context; this is **not** a production backup policy or disaster-recovery plan. CI success must be verified against actual run results before being claimed.
 
-A new [development-only server-side browser session primitive](docs/BROWSER_SESSIONS.md) binds one-time OIDC/PKCE transactions to host-only Secure/HttpOnly browser cookies, rotates the session identifier after login, enforces a hard expiry, adds CSRF checks, and supports local logout. It is deliberately in-memory, has no HTTP listener, and is **not** a production BFF, Gateway SSO integration or deployed login page.
+The [development-only server-side browser session primitive](docs/BROWSER_SESSIONS.md) binds one-time OIDC/PKCE transactions to Secure/HttpOnly/SameSite host-only cookies, rotates identifiers after login, enforces hard expiry and CSRF checks, and supports local logout. A [loopback-only WSGI HTTP example](docs/LOOPBACK_HTTP.md) demonstrates cookie delivery and protected logout using a short-lived in-memory session. This is **not** a production BFF, Gateway integration or finished GoreeCloud UI web application.
 
 ## Project documents
 

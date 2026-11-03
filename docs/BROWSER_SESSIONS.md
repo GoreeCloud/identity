@@ -16,6 +16,8 @@ The `goreecloud_identity.browser_sessions.BrowserSessionManager` provides a **si
 - Logout removes the local authenticated session and sends an expired host-only browser cookie.
 - A bounded, lock-protected store rejects new sessions when capacity is exhausted; expired records are pruned on access.
 
+A separate [localhost-only WSGI example](LOOPBACK_HTTP.md) now demonstrates delivery of these cookies over HTTP and a CSRF-protected logout form in an isolated development configuration. The example is not a production deployment and has no persistent sessions or Gateway integration.
+
 ## Required HTTP integration
 
 A future GoreeCloud Identity web application must place the returned `set_cookie` string in an actual `Set-Cookie` response header. It must pass the browser's Cookie request header and complete callback URL into the manager. The CSRF token must be included in a trusted server-rendered form or other approved mechanism—not copied to a cookie or exposed in URLs.
