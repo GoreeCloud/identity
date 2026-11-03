@@ -93,7 +93,8 @@ def read_response(opener, url: str, data: bytes | None = None):
         if len(body) > 262144:
             raise OIDCError("identity HTML response too large")
         if not (200 <= status < 400):
-            raise OIDCError("local identity returned an error")
+            stage = "login_form_POST" if data is not None else "authorization_GET"
+            raise OIDCError(f"local {stage} returned HTTP {status}")
         return status, location, body.decode("utf-8", errors="replace")
 
 
