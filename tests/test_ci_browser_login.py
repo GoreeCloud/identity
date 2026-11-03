@@ -1,6 +1,8 @@
 """Offline safeguards for disposable browser-based OIDC CI smoke tests."""
 import json
 from pathlib import Path
+from types import SimpleNamespace
+from urllib.request import Request
 import sys
 import unittest
 
@@ -8,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from prepare_ci_login_fixture import build_fixture, CLIENT_ID, CALLBACK_URI
-from smoke_login import LoginForm, assert_local_url
+from smoke_login import LoginForm, ExactLoopbackCookiePolicy, assert_local_url
 from goreecloud_identity.oidc import OIDCError
 
 
@@ -81,6 +83,21 @@ class BrowserNavigationTests(unittest.TestCase):
         ):
             with self.subTest(value=value), self.assertRaises(OIDCError):
                 assert_local_url(value, allow_callback=True)
+
+    def test_secure_cookie_exception_is_exact_localhost_only(self):
+        policy = ExactLoopbackCookiePolicy()
+        secure = SimpleNamespace(secure=True)
+        self.assertTrue(policy.return_ok_secure(
+            secure, Request("http://localhost:8080/realms/goreecloud/login-actions/authenticate")
+        ))
+        for url in (
+            "http://localhost:8081/realms/goreecloud/login-actions/authenticate",
+            "http://127.0.0.1:8080/realms/goreecloud/login-actions/authenticate",
+            "http://example.test:8080/realms/goreecloud/login-actions/authenticate",
+        ):
+            with self.subTest(url=url):
+                self.assertFalse(policy.return_ok_secure(secure, Request(url)))
+        self.assertTrue(policy.return_ok_secure(secure, Request("https://example.test/auth")))
 
     def test_extracts_keycloak_form_action(self):
         parser = LoginForm()
