@@ -61,6 +61,7 @@ class ResourceAuthorizationTests(unittest.TestCase):
         out = {
             "iss": self.issuer, "sub": "synthetic-user",
             "aud": self.config.audience, "azp": self.config.authorized_party,
+            "goreecloud_tenant": "family",
             "iat": t - 10, "exp": t + 300, "nbf": t - 10,
             "typ": "Bearer", "scope": "openid gateway:read",
             "realm_access": {"roles": ["gateway-reader"]},
@@ -92,6 +93,22 @@ class ResourceAuthorizationTests(unittest.TestCase):
     def test_wrong_tenant_resource_denied(self):
         other = AccessRequest("business","gateway-console","read","10.0.0.2")
         self.assertEqual(self.authorizer.authorize(self.signed(),other).reason,"tenant_mismatch")
+
+    def test_wrong_signed_tenant_denied_before_resource_policy(self):
+        invalid = self.signed(goreecloud_tenant="other-tenant")
+        self.assertEqual(
+            self.authorizer.authorize(invalid, self.req).reason,
+            "authentication_failed",
+        )
+
+    def test_absent_signed_tenant_denied_before_resource_policy(self):
+        claims = self.claims()
+        del claims["goreecloud_tenant"]
+        invalid = jwt.encode(claims, self.key, algorithm="RS256", headers={"kid": "res-test"})
+        self.assertEqual(
+            self.authorizer.authorize(invalid, self.req).reason,
+            "authentication_failed",
+        )
 
     def test_wrong_resource_denied(self):
         other = AccessRequest("family","vpn-management","read","10.0.0.2")
