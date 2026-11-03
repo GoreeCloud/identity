@@ -1,0 +1,77 @@
+/* GoreeCloud UI-inspired semantic layer. Upstream Keycloak templates remain in place. */
+:root {
+  --gc-brand: #8d7af5;
+  --gc-on-brand: #101323;
+  --gc-canvas: #080e1c;
+  --gc-surface: #111b30;
+  --gc-surface-tonal: #1b2941;
+  --gc-outline: #637392;
+  --gc-text: #f5f7ff;
+  --gc-text-soft: #c4d0e8;
+  --gc-focus: #c3b8ff;
+  --gc-radius-input: 12px;
+  --gc-radius-panel: 26px;
+}
+html, body, .login-pf body {
+  min-height: 100%;
+  background: radial-gradient(circle at 12% 8%, #263354 0, transparent 34%),
+              radial-gradient(circle at 94% 95%, #29224a 0, transparent 30%),
+              var(--gc-canvas);
+  color: var(--gc-text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.login-pf-page .card-pf {
+  background: var(--gc-surface);
+  color: var(--gc-text);
+  border: 1px solid var(--gc-outline);
+  border-top: 1px solid var(--gc-brand);
+  border-radius: var(--gc-radius-panel);
+  box-shadow: 0 24px 72px rgba(0, 0, 0, .4);
+  padding: clamp(24px, 4vw, 44px);
+}
+#kc-header-wrapper, .login-pf-page-header {
+  color: var(--gc-text);
+  letter-spacing: -.03em;
+  font-weight: 700;
+}
+#kc-page-title, .login-pf-page .card-pf-title,
+.login-pf-page .login-pf-header h1 { color: var(--gc-text); }
+.login-pf-page .form-group label, .login-pf-page p,
+.login-pf-page .instruction { color: var(--gc-text-soft); }
+.login-pf-page input[type="text"], .login-pf-page input[type="password"],
+.login-pf-page input[type="email"] {
+  color: var(--gc-text);
+  background: var(--gc-surface-tonal);
+  border: 1px solid var(--gc-outline);
+  border-radius: var(--gc-radius-input);
+  min-height: 44px;
+}
+.login-pf-page input:focus-visible, .login-pf-page button:focus-visible,
+.login-pf-page a:focus-visible {
+  outline: 3px solid var(--gc-focus);
+  outline-offset: 3px;
+}
+#kc-login, .login-pf-page .btn-primary {
+  background: var(--gc-brand);
+  color: var(--gc-on-brand);
+  border-color: var(--gc-brand);
+  border-radius: 12px;
+  font-weight: 700;
+  min-height: 44px;
+}
+#kc-login:hover, .login-pf-page .btn-primary:hover {
+  background: #b4a9ff;
+  color: var(--gc-on-brand);
+}
+.login-pf-page a { color: #c6bbff; }
+.login-pf-page a:hover { color: #e4dcff; }
+@media (max-width: 600px) {
+  .login-pf-page .card-pf { padding: 24px 20px; border-radius: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+@media (forced-colors: active) {
+  .login-pf-page .card-pf { border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
+  #kc-login, .login-pf-page .btn-primary { border: 1px solid ButtonText; }
+}

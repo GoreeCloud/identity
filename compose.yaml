@@ -1,0 +1,56 @@
+# DEVELOPMENT ONLY: loopback HTTP, never deploy directly to the public internet.
+name: goreecloud-identity
+services:
+  db:
+    image: postgres:17.7-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: goreecloud_identity
+      POSTGRES_USER: identity
+      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD:?Run python3 scripts/init_env.py}
+    volumes:
+      - identity-data:/var/lib/postgresql/data
+    networks:
+      - identity-private
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U identity -d goreecloud_identity"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    security_opt:
+      - no-new-privileges:true
+
+  identity:
+    image: quay.io/keycloak/keycloak:26.8.1
+    restart: unless-stopped
+    command: ["start-dev", "--import-realm"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/goreecloud_identity
+      KC_DB_USERNAME: identity
+      KC_DB_PASSWORD: \${POSTGRES_PASSWORD:?Run python3 scripts/init_env.py}
+      KC_BOOTSTRAP_ADMIN_USERNAME: \${KC_BOOTSTRAP_ADMIN_USERNAME:?Run python3 scripts/init_env.py}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: \${KC_BOOTSTRAP_ADMIN_PASSWORD:?Run python3 scripts/init_env.py}
+      KC_HOSTNAME: http://localhost:8080
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "false"
+    volumes:
+      - ./realm:/opt/keycloak/data/import:ro
+      - ./themes:/opt/keycloak/themes:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - identity-private
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  identity-private:
+    driver: bridge
+
+volumes:
+  identity-data:
