@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from goreecloud_identity.oidc import (
     ClientConfig, StrictTransport, begin_authorization, parse_callback,
-    validate_id_token, validate_metadata,
+    validate_id_token, validate_metadata, _rsa_signing_key,
 )
 from goreecloud_identity.tokens import verify_access_token, VerificationError
 from prepare_ci_login_fixture import (
@@ -42,6 +42,24 @@ def check_gateway_claims(payload: dict, client_id: str) -> None:
         raise ValueError("Keycloak access token is missing Gateway's required trust claims")
 
 
+def classify_verified_gateway_claims(claims: dict, client_id: str) -> str:
+    """Return ONLY static category names from an independently verified JWT."""
+    audience = claims.get("aud")
+    audiences = [audience] if isinstance(audience, str) else audience
+    roles = claims.get("realm_access")
+    roles = roles.get("roles") if isinstance(roles, dict) else None
+    scope = claims.get("scope")
+    checks = {
+        "audience": isinstance(audiences, list) and "goreecloud-gateway-console" in audiences,
+        "client": claims.get("azp") == client_id,
+        "tenant": claims.get("goreecloud_tenant") == "family",
+        "scope": isinstance(scope, str) and "gateway:read" in scope.split(),
+        "role": isinstance(roles, list) and "gateway-reader" in roles,
+        "type": claims.get("typ") == "Bearer",
+    }
+    return ",".join(key for key, passes in checks.items() if not passes) or "none"
+
+
 def main() -> None:
     assert_ci_environment()
     if not SECRET_FILE.is_file():
@@ -65,12 +83,29 @@ def main() -> None:
         raise ValueError("token endpoint returned unexpected token class")
     access_token, id_token = tokens.get("access_token"), tokens.get("id_token")
     identity = validate_id_token(id_token, access_token, flow.nonce, config, keys)
-    verified = verify_access_token(
-        access_token, issuer=ISSUER,
-        audience="goreecloud-gateway-console",
-        authorized_party=CLIENT_ID, tenant_id="family", jwks=keys,
-        required_scopes=["gateway:read"], max_lifetime_seconds=3600,
-    )
+    try:
+        verified = verify_access_token(
+            access_token, issuer=ISSUER,
+            audience="goreecloud-gateway-console",
+            authorized_party=CLIENT_ID, tenant_id="family", jwks=keys,
+            required_scopes=["gateway:read"], max_lifetime_seconds=3600,
+        )
+    except VerificationError:
+        # This diagnostic may run ONLY after independently verifying the
+        # SAME access token's RS256 signature and pinned issuer. Never use
+        # decoded diagnostic claims to grant access or expose raw values.
+        try:
+            signed = jwt.decode(
+                access_token, _rsa_signing_key(access_token, keys),
+                algorithms=["RS256"], issuer=ISSUER,
+                options={"verify_aud": False, "require": ["iss", "sub", "iat", "exp"]},
+                leeway=30,
+            )
+            print("DIAG: verified_gateway_missing=" +
+                  classify_verified_gateway_claims(signed, CLIENT_ID))
+        except Exception:
+            print("DIAG: verified_gateway_missing=signature_or_issuer")
+        raise
     if identity.sub != verified.subject.subject_id or (
         "gateway-reader" not in verified.subject.roles
     ):
