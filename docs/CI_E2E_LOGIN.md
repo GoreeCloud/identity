@@ -2,6 +2,12 @@
 
 **Classification:** GitHub-hosted, CI-only end-to-end authentication verification. Not an application, production login page, production identity deployment or permission to change existing services.
 
+## Verified CI evidence
+
+**November 3, 2026:** [GitHub Actions run 41659751802](https://github.com/GoreeCloud/identity/actions/runs/41659751802) completed successfully after [PR #8](https://github.com/GoreeCloud/identity/pull/8) introduced an actual synthetic browser login, Authorization Code + S256 PKCE exchange, and signed ID-token check. All 84 offline tests passed, as did disposable Keycloak startup, OIDC discovery, identity login, restart, PostgreSQL restore, container shutdown and synthetic-credential cleanup. Merged to `main` as `51e33abbece18f4f56ad99101222d03476d42531`.
+
+This is evidence for the disposable CI authentication path only, **not** for secure production browser sessions, MFA, or Gateway SSO.
+
 ## Test scope
 
 The CI job exercises the real Keycloak realm loaded in disposable containers. Immediately before container startup, `scripts/prepare_ci_login_fixture.py` adds exactly one public OIDC client and one randomly credentialed synthetic user to the runner's checked-out development realm. The committed `realm/goreecloud-realm.json` remains unchanged.
