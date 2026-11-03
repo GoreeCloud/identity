@@ -41,9 +41,48 @@ def build_fixture(base: dict, username: str, password: str) -> dict:
         "redirectUris": [CALLBACK_URI],
         "webOrigins": [],
         "attributes": {"pkce.code.challenge.method": "S256"},
+        "fullScopeAllowed": False,
+        "scopeMappings": ["gateway-reader"],
+        "defaultClientScopes": ["roles", "profile", "email", "gateway:read"],
+    }]
+    data["roles"] = {"realm": [
+        {"name": "gateway-reader", "description": "Synthetic CI-only Gateway reader role"}
+    ]}
+    data["clientScopes"] = [{
+        "name": "gateway:read",
+        "protocol": "openid-connect",
+        "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false",
+        },
+        "protocolMappers": [
+            {
+                "name": "ci-gateway-resource-audience",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-audience-mapper",
+                "config": {
+                    "included.custom.audience": "goreecloud-gateway-console",
+                    "access.token.claim": "true",
+                    "id.token.claim": "false",
+                },
+            },
+            {
+                "name": "ci-tenant-claim",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-hardcoded-claim-mapper",
+                "config": {
+                    "claim.name": "goreecloud_tenant",
+                    "claim.value": "family",
+                    "jsonType.label": "String",
+                    "access.token.claim": "true",
+                    "id.token.claim": "false",
+                },
+            },
+        ],
     }]
     data["users"] = [{
         "username": username,
+        "realmRoles": ["gateway-reader"],
         "enabled": True,
         "email": "synthetic-ci-login@example.test",
         "emailVerified": True,

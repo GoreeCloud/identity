@@ -52,6 +52,8 @@ The [development-only server-side browser session primitive](docs/BROWSER_SESSIO
 
 A [pinned-issuer signing-key cache and resource authorization adapter](docs/RESOURCE_AUTHORIZATION.md) now joins exact Keycloak JWKS retrieval to the existing RS256 access-token verification and explicit deny-by-default role/group/IP policies. Its 142-test suite and [real disposable Keycloak key-source check](https://github.com/GoreeCloud/identity/actions/runs/41720284851) passed. It is an original **Python development component**, not a deployed Gateway or Zero Trust access service. Token revocation and production key-rotation acceptance remain outstanding.
 
+A [CI-only Gateway token claim contract](docs/GATEWAY_CLAIMS.md) creates a synthetic scoped Keycloak client, realm role and tenant/audience protocol mappers **only in the disposable CI runner**. It validates a real authorization-code access token against the existing pinned signing-key verifier and exact scope/tenant requirements. It does not establish production Gateway sign-in, live token revocation or web/Android PKCE clients.
+
 ## Project documents
 
 - [Capability and implementation matrix](docs/CAPABILITIES.md)
