@@ -32,10 +32,17 @@ To stop without deleting persistent data: `docker compose down`. **Do not** use 
 
 ## Tests
 
+Use an isolated virtual environment for the optional access-token verification dependency:
+
 ```sh
-python3 -m unittest discover -s tests -v
-python3 scripts/check_config.py
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements-auth.txt
+python -m unittest discover -s tests -v
+python scripts/check_config.py
 ```
+
+The optional [RS256 bearer-token verification helper](docs/TOKEN_VERIFICATION.md) tests issuer, audience, signer, client, token type, lifetime and scopes using a trusted externally supplied JWKS. It is not yet integrated with any application, and it does **not** fetch or establish trust in signing keys by itself. Do not treat it as a deployed access gateway or browser SSO implementation.
 
 CI performs offline unit/configuration checks. It does not claim working end-to-end SSO, Docker runtime readiness, production security, or visual compliance.
 

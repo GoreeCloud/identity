@@ -23,7 +23,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 15. Remote access | Not implemented | Audit Guacamole/SSH/RDP/VNC approach |
 | 16. Self-service | Keycloak upstream account-console capability | GoreeCloud UI and secure recovery flow |
 | 17. Multi-tenancy | One initial development realm | Tenant isolation and organizations |
-| 18. API/machine identity | Upstream service account support | Scoped client credentials and token validation |
+| 18. API/machine identity | Upstream service account support and optional standalone RS256 token verification helper | Trusted JWKS source, scoped client credentials and end-to-end resource enforcement |
 | 19. AI agents | Not implemented | Delegation, consent and actor attribution |
 | 20. Privileged access | Not implemented | Least privilege, access requests and time limits |
 | 21. Sessions/tokens/consent | Keycloak upstream capabilities | End-to-end revocation and logout testing |

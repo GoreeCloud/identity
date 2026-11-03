@@ -14,6 +14,10 @@ Keycloak supplies upstream identity protocols and account consoles. GoreeCloud a
 
 This is not a functional user login test, an independent token signature validation implementation, a persistence backup test, or a production load test. The workflow exists independently of its passing status; runtime acceptance must be verified from actual CI logs.
 
+## Standalone access-token verifier (not integrated)
+
+The optional Python helper in `src/goreecloud_identity/tokens.py` uses PyJWT to verify RS256 signatures against a caller-supplied, already-trusted JWKS and enforces exact realm issuer, resource audience, OAuth client (`azp`), bearer token type, timestamps and maximum lifetime. See [the verification contract](TOKEN_VERIFICATION.md). No remote JWKS discovery, browser login, refresh, revocation or gateway integration is implemented by this helper.
+
 ## Production target (not implemented)
 
 - Dedicated hardened Keycloak runtime behind approved HTTPS termination; strict hostname, reverse-proxy and forwarding-header verification.
