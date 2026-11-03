@@ -42,7 +42,7 @@ def build_fixture(base: dict, username: str, password: str) -> dict:
         "webOrigins": [],
         "attributes": {"pkce.code.challenge.method": "S256"},
         "fullScopeAllowed": False,
-        "defaultClientScopes": ["profile", "gateway:read"],
+        "defaultClientScopes": ["basic", "profile", "gateway:read"],
     }]
     data["scopeMappings"] = [{"client": CLIENT_ID, "roles": ["gateway-reader"]}]
     data["roles"] = {"realm": [
@@ -52,6 +52,19 @@ def build_fixture(base: dict, username: str, password: str) -> dict:
     # profile scope for the smoke client's 'openid profile' request.
     # Do not add additional privileges or production accounts.
     data["clientScopes"] = [{
+        "name": "basic",
+        "protocol": "openid-connect",
+        "attributes": {"include.in.token.scope": "false"},
+        "protocolMappers": [{
+            "name": "ci-subject",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-sub-mapper",
+            "config": {
+                "access.token.claim": "true",
+                "introspection.token.claim": "true",
+            },
+        }],
+    }, {
         "name": "profile",
         "protocol": "openid-connect",
         "attributes": {"include.in.token.scope": "true"},
