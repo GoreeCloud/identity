@@ -72,12 +72,19 @@ def assert_local_url(url: str, *, allow_callback: bool = False) -> None:
     raise OIDCError("navigation outside local test identity blocked")
 
 
-def read_response(opener, url: str, data: bytes | None = None):
+def read_response(opener, url: str, data: bytes | None = None, referer: str | None = None):
     assert_local_url(url)
+    if referer is not None:
+        assert_local_url(referer)
+    headers = ({} if data is None else {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Origin": "http://localhost:8080",
+        "Referer": referer or "http://localhost:8080/realms/goreecloud/protocol/openid-connect/auth",
+    })
     req = Request(
         url,
         data=data,
-        headers={"Content-Type": "application/x-www-form-urlencoded"} if data is not None else {},
+        headers=headers,
         method="POST" if data is not None else "GET",
     )
     try:
@@ -94,14 +101,19 @@ def read_response(opener, url: str, data: bytes | None = None):
             raise OIDCError("identity HTML response too large")
         if not (200 <= status < 400):
             stage = "login_form_POST" if data is not None else "authorization_GET"
-            raise OIDCError(f"local {stage} returned HTTP {status}")
+            message = body.lower()
+            kind = ("cookie" if b"cookie" in message else
+                    "expired" if b"expired" in message else
+                    "invalid" if b"invalid" in message else "unclassified")
+            raise OIDCError(f"local {stage} returned HTTP {status} ({kind})")
         return status, location, body.decode("utf-8", errors="replace")
 
 
 def authorize_browser(url: str, username: str, password: str) -> str:
     """Perform ONE synthetic password-form login; never use direct grant."""
     assert_local_url(url)
-    opener = build_opener(ProxyHandler({}), HTTPCookieProcessor(CookieJar()), NoRedirect())
+    jar = CookieJar()
+    opener = build_opener(ProxyHandler({}), HTTPCookieProcessor(jar), NoRedirect())
     current = url
     for _ in range(8):
         status, location, html = read_response(opener, current)
@@ -122,10 +134,14 @@ def authorize_browser(url: str, username: str, password: str) -> str:
         assert_local_url(action)
         if not action.startswith(LOGIN_PREFIX):
             raise OIDCError("unexpected login action")
-        status, location, _ = read_response(
-            opener, action,
-            urlencode({"username": username, "password": password, "credentialId": ""}).encode("utf-8"),
-        )
+        try:
+            status, location, _ = read_response(
+                opener, action,
+                urlencode({"username": username, "password": password, "credentialId": ""}).encode("utf-8"),
+                referer=current,
+            )
+        except OIDCError as error:
+            raise OIDCError(f"{error}; session_cookie_count={len(jar)}") from error
         if not (300 <= status < 400) or not location:
             raise OIDCError("synthetic browser login did not redirect")
         target = urljoin(action, location)
