@@ -26,6 +26,10 @@ The [OIDC relying-party module](OIDC_RELYING_PARTY.md) builds authorization-code
 
 A [CI-only login harness](CI_E2E_LOGIN.md) seeds one temporary public PKCE client and synthetic user into the runner-only realm import, submits a real Keycloak login form using an isolated local cookie jar, intercepts the callback without opening a listener, exchanges the authorization code and validates its signed ID token. The test does not build a reusable browser session server, enable production credentials, or modify Gateway/VPS services. Runtime success requires an actual passing GitHub Actions execution.
 
+## Development browser-session boundary
+
+The [original browser-session primitive](BROWSER_SESSIONS.md) keeps one-time OIDC PKCE state and nonce server-side, issues Secure/HttpOnly host-only session cookies, rotates the identifier on login, requires CSRF tokens for protected state changes, enforces hard expiry and supports local logout. It is intentionally in-memory, one-process and not connected to an HTTP server, reverse proxy, database or production identity service.
+
 ## Production target (not implemented)
 
 - Dedicated hardened Keycloak runtime behind approved HTTPS termination; strict hostname, reverse-proxy and forwarding-header verification.

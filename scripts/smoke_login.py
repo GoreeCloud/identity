@@ -18,9 +18,9 @@ from urllib.request import build_opener, HTTPCookieProcessor, HTTPRedirectHandle
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from goreecloud_identity.oidc import (
-    ClientConfig, OIDCError, StrictTransport, begin_authorization,
-    complete_authorization, validate_metadata,
+    ClientConfig, OIDCError, StrictTransport, validate_metadata,
 )
+from goreecloud_identity.browser_sessions import BrowserSessionManager
 from prepare_ci_login_fixture import (
     CLIENT_ID, CALLBACK_URI, SECRET_FILE, assert_ci_environment,
 )
@@ -199,13 +199,28 @@ def main() -> None:
     config = ClientConfig(ISSUER, CLIENT_ID, CALLBACK_URI, allow_local_dev=True)
     transport = StrictTransport(config)
     metadata = validate_metadata(transport.discovery(), config)
-    url, flow = begin_authorization(config, metadata)
+    manager = BrowserSessionManager(config, metadata, transport, max_sessions=8)
+    pending = manager.start_login()
+    original_cookie = pending.set_cookie.split(";", 1)[0]
+    if manager.get_identity(original_cookie) is not None:
+        raise OIDCError("anonymous login session unexpectedly authenticated")
 
-    callback = authorize_browser(url, credentials["username"], credentials["password"])
-    identity = complete_authorization(config, metadata, flow, callback, transport)
+    callback = authorize_browser(
+        pending.authorization_url, credentials["username"], credentials["password"]
+    )
+    completed = manager.complete_login(original_cookie, callback)
+    identity = completed.identity
+    new_cookie = completed.set_cookie.split(";", 1)[0]
     if not identity.sub or identity.issuer != ISSUER or identity.client_id != CLIENT_ID:
         raise OIDCError("OIDC identity did not validate")
-    print("PASS: disposable Keycloak browser-form login, code+S256 PKCE exchange, signed ID token")
+    if (new_cookie == original_cookie or manager.get_identity(original_cookie) is not None
+            or manager.get_identity(new_cookie) != identity
+            or not manager.verify_csrf(new_cookie, completed.csrf_token)):
+        raise OIDCError("server-side browser session acceptance failed")
+    manager.logout(new_cookie)
+    if manager.get_identity(new_cookie) is not None:
+        raise OIDCError("local browser session logout failed")
+    print("PASS: synthetic Keycloak browser login, S256 PKCE exchange, verified ID token, in-process session rotation/CSRF/logout")
     print("NOT TESTED: production sessions, MFA, logout, Gateway authorization or Android")
 
 
