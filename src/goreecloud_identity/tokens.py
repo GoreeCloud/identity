@@ -136,6 +136,11 @@ def verify_access_token(
         raise VerificationError("ID token or unexpected token type rejected")
     if claims.get("azp") != authorized_party:
         raise VerificationError("unexpected authorized OAuth client")
+    # The signed token must independently affirm the configured resource tenant.
+    # Never attribute a user to this tenant based on configuration alone.
+    signed_tenant = claims.get("goreecloud_tenant")
+    if not isinstance(signed_tenant, str) or signed_tenant != tenant_id:
+        raise VerificationError("signed tenant claim mismatch")
     if not isinstance(claims.get("sub"), str) or not claims["sub"]:
         raise VerificationError("missing valid user subject")
     if any(type(claims.get(x)) is not int for x in ("iat", "exp")):
