@@ -42,9 +42,9 @@ def build_fixture(base: dict, username: str, password: str) -> dict:
         "webOrigins": [],
         "attributes": {"pkce.code.challenge.method": "S256"},
         "fullScopeAllowed": False,
-        "scopeMappings": ["gateway-reader"],
         "defaultClientScopes": ["roles", "profile", "email", "gateway:read"],
     }]
+    data["scopeMappings"] = [{"client": CLIENT_ID, "roles": ["gateway-reader"]}]
     data["roles"] = {"realm": [
         {"name": "gateway-reader", "description": "Synthetic CI-only Gateway reader role"}
     ]}
