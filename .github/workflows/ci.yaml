@@ -55,6 +55,8 @@ jobs:
         run: |
           docker compose restart identity
           python3 scripts/smoke_oidc.py
+      - name: Verify disposable database backup and restore
+        run: python3 scripts/smoke_backup_restore.py
       - name: Stop isolated test services
         if: always()
         run: docker compose down --remove-orphans

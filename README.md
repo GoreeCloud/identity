@@ -44,7 +44,7 @@ python scripts/check_config.py
 
 The optional [RS256 bearer-token verification helper](docs/TOKEN_VERIFICATION.md) tests issuer, audience, signer, client, token type, lifetime and scopes using a trusted externally supplied JWKS. It is not yet integrated with any application, and it does **not** fetch or establish trust in signing keys by itself. Do not treat it as a deployed access gateway or browser SSO implementation.
 
-CI performs offline unit/configuration checks. It does not claim working end-to-end SSO, Docker runtime readiness, production security, or visual compliance.
+GitHub-hosted CI performs offline checks, disposable runtime OIDC discovery/restart checks and a **CI-only** PostgreSQL backup/restore smoke into a separately created database. The backup script refuses execution outside the expected GitHub Actions context; this is **not** a production backup policy or disaster-recovery plan. CI success must be verified against actual run results before being claimed.
 
 ## Project documents
 

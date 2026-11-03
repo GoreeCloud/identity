@@ -12,7 +12,7 @@
 - [ ] Audit trusted JWKS acquisition and rotation, issuer/audience/client restrictions, API authorization and live revocation requirements before integrating the optional token verifier.
 - [ ] Perform browser-based end-to-end authentication, logout, revocation, CSRF and account-recovery tests.
 - [ ] Test realm import behavior, upgrades, restores and rollback using non-production identity data.
-- [ ] Encrypt and restore-test persistent database backups; document recovery point and recovery time objectives.
+- [ ] Encrypt and restore-test persistent production database backups; document recovery point and recovery time objectives. The CI-only disposable restore smoke is not a substitute.
 - [ ] Secure database and internal management ports and protect metrics.
 - [ ] Review Keycloak version advisories and image digests; add dependency/container scanning.
 - [ ] Verify per-tenant authorization isolation; no role name alone grants cross-tenant access.
