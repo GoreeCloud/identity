@@ -3,12 +3,14 @@ import json
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from prepare_ci_login_fixture import build_fixture
-from smoke_gateway_claims import check_gateway_claims, classify_verified_gateway_claims
+from smoke_gateway_claims import check_gateway_claims, classify_verified_gateway_claims, require_policy_rejection
+from goreecloud_identity.tokens import VerificationError
 
 
 class GatewayClaimContractTests(unittest.TestCase):
@@ -84,6 +86,22 @@ class GatewayClaimContractTests(unittest.TestCase):
         categories = classify_verified_gateway_claims(claims, "goreecloud-ci-public")
         self.assertEqual(categories, "audience,client,tenant,scope,role,type")
         self.assertNotIn(secret, categories)
+
+    def test_negative_policy_helper_is_fail_closed(self):
+        with patch("smoke_gateway_claims.verify_access_token",
+                   side_effect=VerificationError("synthetic denial")) as verify:
+            require_policy_rejection("synthetic-token", {"keys": []}, tenant_id="another")
+            self.assertEqual(verify.call_args.kwargs["tenant_id"], "another")
+            self.assertEqual(verify.call_args.kwargs["audience"], "goreecloud-gateway-console")
+        with patch("smoke_gateway_claims.verify_access_token", return_value=object()):
+            with self.assertRaises(ValueError):
+                require_policy_rejection("synthetic-token", {"keys": []},
+                                         tenant_id="another")
+        with patch("smoke_gateway_claims.verify_access_token",
+                   side_effect=RuntimeError("unexpected fixture error")):
+            with self.assertRaises(RuntimeError):
+                require_policy_rejection("synthetic-token", {"keys": []},
+                                         tenant_id="another")
 
     def test_accepts_gateway_contract_after_token_verification(self):
         check_gateway_claims(self.example(), "goreecloud-ci-public")
