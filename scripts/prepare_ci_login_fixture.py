@@ -42,13 +42,21 @@ def build_fixture(base: dict, username: str, password: str) -> dict:
         "webOrigins": [],
         "attributes": {"pkce.code.challenge.method": "S256"},
         "fullScopeAllowed": False,
-        "defaultClientScopes": ["roles", "profile", "email", "gateway:read"],
+        "defaultClientScopes": ["profile", "gateway:read"],
     }]
     data["scopeMappings"] = [{"client": CLIENT_ID, "roles": ["gateway-reader"]}]
     data["roles"] = {"realm": [
         {"name": "gateway-reader", "description": "Synthetic CI-only Gateway reader role"}
     ]}
+    # Imported realms with explicit clientScopes need an explicit OIDC
+    # profile scope for the smoke client's 'openid profile' request.
+    # Do not add additional privileges or production accounts.
     data["clientScopes"] = [{
+        "name": "profile",
+        "protocol": "openid-connect",
+        "attributes": {"include.in.token.scope": "true"},
+        "protocolMappers": [],
+    }, {
         "name": "gateway:read",
         "protocol": "openid-connect",
         "attributes": {
@@ -56,6 +64,18 @@ def build_fixture(base: dict, username: str, password: str) -> dict:
             "display.on.consent.screen": "false",
         },
         "protocolMappers": [
+            {
+                "name": "ci-realm-roles",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-usermodel-realm-role-mapper",
+                "config": {
+                    "claim.name": "realm_access.roles",
+                    "jsonType.label": "String",
+                    "multivalued": "true",
+                    "access.token.claim": "true",
+                    "id.token.claim": "false",
+                },
+            },
             {
                 "name": "ci-gateway-resource-audience",
                 "protocol": "openid-connect",
