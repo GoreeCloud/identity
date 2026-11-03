@@ -28,14 +28,21 @@ class GatewayClaimContractTests(unittest.TestCase):
         self.assertFalse(ci["clients"][0]["fullScopeAllowed"])
         self.assertNotIn("scopeMappings", ci["clients"][0])
         self.assertEqual(ci["scopeMappings"], [{"client": "goreecloud-ci-public", "roles": ["gateway-reader"]}])
-        self.assertIn("gateway:read", ci["clients"][0]["defaultClientScopes"])
+        self.assertEqual(ci["clients"][0]["defaultClientScopes"], ["profile", "gateway:read"])
 
     def test_synthetic_client_scope_only_adds_gateway_access_claims(self):
         ci = build_fixture(self.base, "gc-ci-gateway-123", "Test9!" + "x" * 40)
-        scope = ci["clientScopes"][0]
-        self.assertEqual(scope["name"], "gateway:read")
+        scopes = {item["name"]: item for item in ci["clientScopes"]}
+        self.assertEqual(set(scopes), {"profile", "gateway:read"})
+        self.assertEqual(scopes["profile"]["protocolMappers"], [])
+        scope = scopes["gateway:read"]
         self.assertEqual(scope["attributes"]["include.in.token.scope"], "true")
         by_type = {x["protocolMapper"]: x for x in scope["protocolMappers"]}
+        role = by_type["oidc-usermodel-realm-role-mapper"]["config"]
+        self.assertEqual(role["claim.name"], "realm_access.roles")
+        self.assertEqual(role["multivalued"], "true")
+        self.assertEqual(role["access.token.claim"], "true")
+        self.assertEqual(role["id.token.claim"], "false")
         audience = by_type["oidc-audience-mapper"]["config"]
         self.assertEqual(audience["included.custom.audience"], "goreecloud-gateway-console")
         self.assertEqual(audience["access.token.claim"], "true")
