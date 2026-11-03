@@ -169,7 +169,11 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except (OIDCError, ValueError, OSError, KeyError, json.JSONDecodeError) as error:
-        # Avoid printing callback URL, credentials, temporary user ID, raw tokens or response HTML.
+    except OIDCError as error:
+        # Every OIDCError message in this module/core is a static, nonsensitive reason.
+        # Never print HTTP responses, raw callback URLs, tokens or credentials.
+        print(f"FAIL: local OIDC end-to-end smoke ({error})")
+        raise SystemExit(1) from None
+    except (ValueError, OSError, KeyError, json.JSONDecodeError) as error:
         print(f"FAIL: local OIDC end-to-end smoke ({type(error).__name__})")
         raise SystemExit(1) from None
