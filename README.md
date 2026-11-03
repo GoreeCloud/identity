@@ -42,6 +42,8 @@ python -m unittest discover -s tests -v
 python scripts/check_config.py
 ```
 
+The development-only [OIDC Authorization Code + PKCE relying-party core](docs/OIDC_RELYING_PARTY.md) implements scoped issuer discovery, S256 challenge, one-time state/nonce, token exchange and signed ID-token validation. It does **not** provide browser session storage, a registered Keycloak client, actual browser login or Gateway SSO. Its synthetic tests must not be mistaken for a successful live authorization code exchange.
+
 The optional [RS256 bearer-token verification helper](docs/TOKEN_VERIFICATION.md) tests issuer, audience, signer, client, token type, lifetime and scopes using a trusted externally supplied JWKS. It is not yet integrated with any application, and it does **not** fetch or establish trust in signing keys by itself. Do not treat it as a deployed access gateway or browser SSO implementation.
 
 GitHub-hosted CI performs offline checks, disposable runtime OIDC discovery/restart checks and a **CI-only** PostgreSQL backup/restore smoke into a separately created database. The backup script refuses execution outside the expected GitHub Actions context; this is **not** a production backup policy or disaster-recovery plan. CI success must be verified against actual run results before being claimed.

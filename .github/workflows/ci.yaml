@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install OIDC verification dependency
+        run: python3 -m pip install --disable-pip-version-check -r requirements-auth.txt
       - name: Generate isolated ephemeral secrets
         run: python3 scripts/init_env.py
       - name: Validate private Docker Compose configuration
@@ -50,7 +52,9 @@ jobs:
       - name: Start disposable local identity engine
         run: docker compose up -d
       - name: Verify OIDC metadata and public JWKS
-        run: python3 scripts/smoke_oidc.py
+        run: |
+          python3 scripts/smoke_oidc.py
+          python3 scripts/smoke_oidc_client.py
       - name: Restart identity container and verify realm continuity
         run: |
           docker compose restart identity
