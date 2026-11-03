@@ -12,6 +12,7 @@
 - [ ] Integrate and verify the offline-tested [in-memory browser session primitive](BROWSER_SESSIONS.md) behind a real HTTPS application boundary; test delivered Secure/HttpOnly/SameSite cookies, actual browser CSRF/session rotation, callback replay, multi-process safety, account logout and revocation. The code alone does not establish any deployed HTTP session service.
 - [ ] Replace the [loopback-only HTTP test example](LOOPBACK_HTTP.md) with a reviewed production service before any public access. Real HTTPS, distributed sessions, rate limits, auditability and GoreeCloud UI acceptance remain unverified.
 - [ ] Audit trusted JWKS acquisition and rotation, issuer/audience/client restrictions, API authorization and live revocation requirements before integrating the optional token verifier.
+- [ ] Review and load-test the optional [pinned-issuer JWKS cache](RESOURCE_AUTHORIZATION.md) with real application key rotation and issuer outages. Offline and CI development tests do not establish production revocation or Keycloak Gateway integration.
 - [ ] Perform browser-based end-to-end authentication, logout, revocation, CSRF and account-recovery tests. The synthetic CI form-login test is not a substitute for real app sessions, logout or revocation acceptance.
 - [ ] Test realm import behavior, upgrades, restores and rollback using non-production identity data.
 - [ ] Encrypt and restore-test persistent production database backups; document recovery point and recovery time objectives. The CI-only disposable restore smoke is not a substitute.

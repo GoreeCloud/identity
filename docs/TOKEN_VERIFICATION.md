@@ -28,4 +28,4 @@ python -m unittest discover -s tests -v
 
 The tests generate ephemeral RSA key material in memory and exercise both acceptance and rejection of signed tokens. No test fixture contains a real credential.
 
-The externally provided `jwks` argument is **not** validated as belonging to the configured issuer. Trust acquisition is the caller's responsibility and must be audited before integration with production applications. Current code does not include a remote JWKS fetcher.
+The low-level `verify_access_token` function still requires the caller to supply independently trusted JWKS. An **optional new** [PinnedIssuerKeys and ResourceAuthorizer adapter](RESOURCE_AUTHORIZATION.md) now retrieves keys only from a configured Keycloak issuer, with bounded freshness, unique RS256 signing-key constraints and explicit deny-by-default authorization. The adapter is not deployed to any production application; short token lifetimes, revocation, verified tenant ownership and operational key rotation remain necessary.

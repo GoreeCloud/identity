@@ -30,6 +30,10 @@ A [CI-only login harness](CI_E2E_LOGIN.md) seeds one temporary public PKCE clien
 
 The [original browser-session primitive](BROWSER_SESSIONS.md) keeps one-time OIDC PKCE state and nonce server-side, issues Secure/HttpOnly host-only cookies, rotates on login, and provides CSRF, hard expiry and local logout. A [localhost-only WSGI example](LOOPBACK_HTTP.md) demonstrates actual HTTP cookie delivery without an external listener. Sessions remain in-memory, one-process, with no production HTTPS, reverse proxy, persistent database, or Gateway integration.
 
+## Development API resource-server trust boundary
+
+The [pinned Keycloak signing-key provider and authorization adapter](RESOURCE_AUTHORIZATION.md) support caller-configured issuer trust, bounded RSA public-key caching/refresh, strict RS256 OAuth bearer verification, non-empty API scope requirements and explicit default-deny resource policies. Unknown signing keys or issuer-fetch errors fail closed. This is a development-only Python integration helper; no production API endpoint or Go Gateway enforcement is implemented.
+
 ## Production target (not implemented)
 
 - Dedicated hardened Keycloak runtime behind approved HTTPS termination; strict hostname, reverse-proxy and forwarding-header verification.

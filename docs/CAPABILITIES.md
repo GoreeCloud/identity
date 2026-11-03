@@ -15,7 +15,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 7. Groups, roles and directories | Keycloak upstream | Integration permissions and directory sync |
 | 8. External IdPs | Not configured | Federated providers with scoped credentials |
 | 9. Provisioning | Not integrated | SCIM inbound/outbound adapters |
-| 10. Authorization | Original local deny-by-default policy helper | Trusted-token integration and enforcement tests |
+| 10. Authorization | Original deny-by-default policy helper and development trusted JWT-to-resource adapter, offline tested | Production gateway enforcement, per-resource tenancy and revocation |
 | 11. Zero Trust | No production enforcement | Condition evaluation and gateway integration |
 | 12. Device identity | Not integrated | Certificates, trust attestations and compliance |
 | 13. Applications and SSO | Auth-code/S256 PKCE client, synthetic Keycloak login verified in CI; localhost-only WSGI HTTP example and socket-level CI flow verified (run 41718513319) | Production-grade web app, stable session store, logout/revocation and Gateway SSO |
@@ -23,7 +23,7 @@ The founder's 32 feature areas define the destination. This repository is the fi
 | 15. Remote access | Not implemented | Audit Guacamole/SSH/RDP/VNC approach |
 | 16. Self-service | Keycloak upstream account-console capability | GoreeCloud UI and secure recovery flow |
 | 17. Multi-tenancy | One initial development realm | Tenant isolation and organizations |
-| 18. API/machine identity | Upstream service account support and optional standalone RS256 token verification helper | Trusted JWKS source, scoped client credentials and end-to-end resource enforcement |
+| 18. API/machine identity | Upstream service account support; RS256 JWT verifier plus pinned Keycloak JWKS cache and explicit scope/resource adapter (CI pending) | Real API/client grant validation, revocation, Gateway/agent integration |
 | 19. AI agents | Not implemented | Delegation, consent and actor attribution |
 | 20. Privileged access | Not implemented | Least privilege, access requests and time limits |
 | 21. Sessions/tokens/consent | Single-process server-side session primitive and localhost HTTP example (cookie delivery, rotation, CSRF, expiry, local logout); CI socket test passed (run 41718513319) | HTTPS application, persistent/distributed session store, revocation and production logout |
