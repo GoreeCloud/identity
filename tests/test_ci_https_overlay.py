@@ -20,10 +20,8 @@ class DisposableHTTPSOverlayTests(unittest.TestCase):
         text = self.source
         self.assertIn('127.0.0.1:8443:8443', text)
         self.assertEqual(text.count('127.0.0.1:8443:8443'), 1)
-        for forbidden in ("0.0.0.0:", '8443:8443"', "network_mode: host",
+        for forbidden in ("0.0.0.0:", "network_mode: host",
                           "privileged: true", "cap_add:"):
-            if forbidden == '8443:8443"':
-                continue
             self.assertNotIn(forbidden, text)
 
     def test_keycloak_issuer_and_tls_are_explicit(self):
