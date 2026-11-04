@@ -49,6 +49,28 @@ jobs:
           assert not data["services"]["db"].get("ports")
           print("PASS: only Keycloak loopback port is published")
           PY
+      - name: Validate unstarted disposable HTTPS Keycloak overlay
+        run: |
+          docker compose -f compose.yaml -f ci/keycloak-https.compose.yaml config --quiet
+          python3 - <<'PY'
+          import json, subprocess
+          config = json.loads(subprocess.check_output(
+              ["docker", "compose", "-f", "compose.yaml", "-f",
+               "ci/keycloak-https.compose.yaml", "config", "--format", "json"],
+              text=True))
+          services = config["services"]
+          assert set(services) == {"identity", "db"}
+          assert not services["db"].get("ports")
+          identity = services["identity"]
+          ports = identity["ports"]
+          assert {str(p["published"]) for p in ports} == {"8080", "8443"}
+          assert all(p.get("host_ip") == "127.0.0.1" for p in ports)
+          assert identity["environment"]["KC_HOSTNAME"] == "https://localhost:8443"
+          assert str(identity["environment"]["KC_HTTP_ENABLED"]).lower() == "false"
+          assert any(m.get("read_only") and m.get("target") ==
+                     "/opt/keycloak/conf/ci-certs" for m in identity["volumes"])
+          print("PASS: development-only HTTPS Compose overlay parses and publishes loopback only; NOT activated")
+          PY
       - name: Prepare CI-only synthetic OIDC client and user
         run: python3 scripts/prepare_ci_login_fixture.py
       - name: Start disposable local identity engine
