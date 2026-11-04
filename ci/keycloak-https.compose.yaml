@@ -1,0 +1,13 @@
+# Disposable GitHub CI only. Overlay for an additional HTTPS acceptance job.
+# This MUST NOT be used as a production deployment configuration.
+services:
+  identity:
+    environment:
+      KC_HOSTNAME: https://localhost:8443
+      KC_HTTP_ENABLED: "false"
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/ci-certs/tls.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/ci-certs/tls.key
+    volumes:
+      - /tmp/goreecloud-keycloak-gateway-ci:/opt/keycloak/conf/ci-certs:ro
+    ports:
+      - "127.0.0.1:8443:8443"
