@@ -14,6 +14,10 @@ GoreeCloud Identity is a privacy-first, self-hosted identity and access manageme
 - **Original code:** `src/goreecloud_identity/policy.py` demonstrates deny-by-default, tenant-scoped, explicit role/group and network-policy decisions **only for trusted, already-authenticated subject context**. It is not an OAuth token validator or an independent identity provider.
 - **Integrations:** planned via supported OIDC/SAML, and protected application gateway interfaces. Do not treat proposed features as implemented.
 
+## Original Python resource adapter — development install, licensing unresolved
+
+For isolated **internal development**, the original `goreecloud_identity` Python authorization helper modules can now be installed from this source tree with `python -m pip install --no-deps -e .` after installing `requirements-auth.txt`. The metadata intentionally uses a `0.0.0` development version, **does not declare any software license, and is not a public release**. Its mere presence does not permit redistribution by third parties. Do not publish a wheel to a public package index, ship it downstream, or claim the repository is open-source licensed until the separate license and third-party provenance review in [issue #17](https://github.com/GoreeCloud/identity/issues/17) is completed. Review [development packaging guardrails](docs/DEVELOPMENT_ADAPTER_PACKAGING.md) before integration. Neither this editable install nor the Keycloak development runtime establishes production SSO.
+
 ## Start locally (development only)
 
 Requires Python 3.11+, Docker Engine and the Docker Compose plugin. Run these commands in a checked-out repository:

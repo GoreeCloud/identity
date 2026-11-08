@@ -5,4 +5,4 @@
 - **PyJWT** — optional MIT-licensed dependency for verified RS256 OAuth bearer-token signatures and claims (pinned to 2.15.1 in requirements-auth.txt); cryptography is installed through the PyJWT crypto extra. https://pypi.org/project/PyJWT/.
 - **GoreeCloud UI** — separate GoreeCloud design authority: https://github.com/GoreeCloud/gc-ui.
 
-The development Compose images are declared by explicit versions. No Authentik source or Authentik Enterprise implementation is bundled. GoreeCloud-authored code is original development work. A license for these authored files must be selected by the owner before representing them as open-source.
+The development Compose images are declared by explicit versions. No Authentik source or Authentik Enterprise implementation is bundled. GoreeCloud-authored code is original development work. A license for these authored files must be selected by the owner before representing them as open-source. The source-only development packaging metadata intentionally omits a license and does not authorize publication, public wheel distribution or downstream incorporation; issue #17 remains the rights-review gate.
