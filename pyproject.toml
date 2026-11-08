@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "goreecloud-identity-resource-dev"
+version = "0.0.0"
+description = "Internal development packaging for original GoreeCloud Identity resource authorization modules; NO published license/release"
+requires-python = ">=3.11"
+dependencies = ["PyJWT[crypto]==2.15.1"]
+# No license/SPDX field: the repository-specific legal review is unresolved.
+# Do not publish or redistribute this development-only package.
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["goreecloud_identity", "goreecloud_identity.*"]
+exclude = ["tests*", "scripts*", "themes*", "realm*"]

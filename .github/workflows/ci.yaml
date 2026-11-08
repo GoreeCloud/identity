@@ -16,6 +16,17 @@ jobs:
           python-version: '3.12'
       - name: Install audited token-verification dependency
         run: python -m pip install --disable-pip-version-check -r requirements-auth.txt
+      - name: Validate source-only development adapter install
+        run: |
+          python3 -m pip install --disable-pip-version-check --no-deps -e .
+          python3 - <<'PY'
+          import importlib.metadata as md
+          from goreecloud_identity.resource_server import ResourceIdentityConfig, ResourceAuthorizer
+          from goreecloud_identity.jwks_trust import PinnedIssuerKeys
+          from goreecloud_identity.tokens import verify_access_token
+          assert md.version("goreecloud-identity-resource-dev") == "0.0.0"
+          print("PASS: source adapter importable after editable install (development only)")
+          PY
       - name: Check authorization, configuration and OIDC validation
         run: python3 -m unittest discover -s tests -v
       - name: Validate development configuration
